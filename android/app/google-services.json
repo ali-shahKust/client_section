@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "188824106714",
+    "firebase_url": "https://lawyerapp-1036d.firebaseio.com",
+    "project_id": "lawyerapp-1036d",
+    "storage_bucket": "lawyerapp-1036d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188824106714:android:94e1677d2b11ac0bb257e3",
+        "android_client_info": {
+          "package_name": "com.example.client_lawyer_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188824106714-t2b874c7vbfam61agq1pjm9pthf554mg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArPse02xAO4iCVS-spV7uXb7ZwJIu-3-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188824106714-t2b874c7vbfam61agq1pjm9pthf554mg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
