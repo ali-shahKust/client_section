@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:client_lawyer_project/search_lawyer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
@@ -68,6 +70,7 @@ class _Client_LoginState extends State<Client_Login> {
                 onChanged: (String value) {
 
                 },
+                keyboardType: TextInputType.emailAddress,
                 controller: _emailcontroller,
                 cursorColor: Constant.appColor,
                 decoration: InputDecoration(
@@ -95,7 +98,7 @@ class _Client_LoginState extends State<Client_Login> {
               elevation: 2.0,
               borderRadius: BorderRadius.all(Radius.circular(10)),
               child: TextField(
-
+                obscureText: true,
                 controller: _passwordcontroller,
                 onChanged: (String value) {},
                 cursorColor: Constant.appColor,
@@ -187,6 +190,8 @@ class _Client_LoginState extends State<Client_Login> {
 
     _email = _emailcontroller.text;
     _password = _passwordcontroller.text;
+
+    HashMap mMap = new HashMap<String, String>();
 
       try{
          await FirebaseAuth.instance.signInWithEmailAndPassword(email:_email , password: _password);
