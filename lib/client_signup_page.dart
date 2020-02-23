@@ -1,4 +1,5 @@
 import 'package:client_lawyer_project/search_lawyer_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/client_login_page.dart';
@@ -12,6 +13,7 @@ class Client_Signup extends StatefulWidget {
 class _Client_SignupState extends State<Client_Signup> {
 
   String _email, _password,_name;
+  final databaseReference = Firestore.instance;
 
   final _emailcontroller = TextEditingController();
   final _passwordcontroller = TextEditingController();
@@ -222,7 +224,12 @@ class _Client_SignupState extends State<Client_Signup> {
 
       try{
         await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
-
+        await databaseReference.collection("Users")
+            .add({
+          'username': _name,
+          'email': _email,
+          'password': _password,
+        });
 //        Firestore.instance.collection('users').document()
 //            .setData({ 'user_email': _email, 'user_password': _password , 'user_name' : _name});
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Client_Login()));
