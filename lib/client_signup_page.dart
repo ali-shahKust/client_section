@@ -12,7 +12,8 @@ class Client_Signup extends StatefulWidget {
 
 class _Client_SignupState extends State<Client_Signup> {
 
-  String _email, _password,_name;
+
+  String _email, _password, _name;
   final databaseReference = Firestore.instance;
 
   final _emailcontroller = TextEditingController();
@@ -54,7 +55,7 @@ class _Client_SignupState extends State<Client_Signup> {
                 height: 250,
                 decoration: BoxDecoration(
                     gradient:
-                    LinearGradient(colors: [Colors.white, Colors.white])),
+                        LinearGradient(colors: [Colors.white, Colors.white])),
               ),
             ],
           ),
@@ -82,7 +83,7 @@ class _Client_SignupState extends State<Client_Signup> {
                     ),
                     border: InputBorder.none,
                     contentPadding:
-                    EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
+                        EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
               ),
             ),
           ),
@@ -111,7 +112,7 @@ class _Client_SignupState extends State<Client_Signup> {
                     ),
                     border: InputBorder.none,
                     contentPadding:
-                    EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
+                        EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
               ),
             ),
           ),
@@ -140,7 +141,7 @@ class _Client_SignupState extends State<Client_Signup> {
                     ),
                     border: InputBorder.none,
                     contentPadding:
-                    EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
+                        EdgeInsets.symmetric(horizontal: 25, vertical: 13)),
               ),
             ),
           ),
@@ -164,7 +165,6 @@ class _Client_SignupState extends State<Client_Signup> {
                   onPressed: () {
                     setState(() {
                       signUp();
-
                     });
                   },
                 ),
@@ -216,28 +216,30 @@ class _Client_SignupState extends State<Client_Signup> {
       ),
     );
   }
-  void signUp() async {
 
+  void signUp() async {
     _email = _emailcontroller.text;
     _password = _passwordcontroller.text;
     _name = _namecontroller.text;
 
-      try{
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
-        await databaseReference.collection("Users")
-            .add({
-          'username': _name,
-          'email': _email,
-          'password': _password,
-        });
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: _email, password: _password);
+
+      String mUid = (await FirebaseAuth.instance.currentUser()).uid;
+      await databaseReference.collection((await FirebaseAuth.instance.currentUser()).uid).add({
+        'user_uid':  (await FirebaseAuth.instance.currentUser()).uid,
+        'username': _name,
+        'email': _email,
+        'password': _password,
+      });
 //        Firestore.instance.collection('users').document()
 //            .setData({ 'user_email': _email, 'user_password': _password , 'user_name' : _name});
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Client_Login()));
-      }catch(e){
-        print(e.message);
-      }
-
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Client_Login()));
+    } catch (e) {
+      print(e.message);
+    }
   }
+
 }
-
-

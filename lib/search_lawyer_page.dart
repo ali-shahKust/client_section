@@ -1,48 +1,72 @@
 import 'package:client_lawyer_project/describe_offer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
 
 class Search_Lawyer_Page extends StatefulWidget {
   Search_Lawyer_Page({Key key}) : super(key: key);
-  static final String path = "lib/src/pages/lists/list2.dart";
+ // static final String path = "lib/src/pages/lists/list2.dart";
 
   _Search_Lawyer_PageState createState() => _Search_Lawyer_PageState();
 }
 
 class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
+  final List<Map> LawyerList = [];
   final primary =Constant.appColor;
   final secondary = Constant.appColor;
+  final databaseReference = Firestore.instance;
 
-  final List<Map> LawyerList = [
-    {
-      "name": "Jenny",
-      "type": "Type of Consultant",
-      "discription": "Description",
-      "logoText":
-      "images/wallet2.png"
-    },
-    {
-      "name": "charlys",
-      "type":  "Type of Consultant",
-      "discription": "Description",
-      "logoText":
-      "images/wallet2.png"
-    },
-    {
-      "name": "Kinder Garden",
-      "type": "Type of Consultant",
-      "discription": "Description",
-      "logoText":
-      "images/wallet2.png"
-    },
-    {
-      "name": "angela",
-      "type": "Type of Consultant",
-      "discription": "Description",
-      "logoText":
-      "images/wallet2.png"
-    },
-  ];
+//  Future<List<String>> getData() async {
+//
+//    databaseReference
+//        .collection("Lawyers")
+//        .getDocuments()
+//        .then((QuerySnapshot snapshot) {
+//      snapshot.documents.forEach((f) =>
+//          print(f.data) ;
+//          //LawyerList.add(f.data));
+//
+//    });
+//  }
+//  final List<Map> LawyerList = [
+//
+//
+//    {
+//      "name": "Jenny",
+//      "type": "Type of Consultant",
+//      "discription": "Description",
+//      "logoText":
+//      "images/wallet2.png"
+//    },
+//    {
+//      "name": "charlys",
+//      "type":  "Type of Consultant",
+//      "discription": "Description",
+//      "logoText":
+//      "images/wallet2.png"
+//    },
+//    {
+//      "name": "Kinder Garden",
+//      "type": "Type of Consultant",
+//      "discription": "Description",
+//      "logoText":
+//      "images/wallet2.png"
+//    },
+//    {
+//      "name": "angela",
+//      "type": "Type of Consultant",
+//      "discription": "Description",
+//      "logoText":
+//      "images/wallet2.png"
+//    },
+//  ];
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +169,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
               borderRadius: BorderRadius.circular(50),
               border: Border.all(width: 3, color: secondary),
               image: DecorationImage(
-                  image: NetworkImage(LawyerList[index]['logoText']),
+                  image: NetworkImage(LawyerList[index]['user_dp']),
                   fit: BoxFit.fill),
             ),
           ),
@@ -154,7 +178,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  LawyerList[index]['name'],
+                  LawyerList[index]['username'],
                   style: TextStyle(
                       color: primary,
                       fontWeight: FontWeight.bold,
@@ -192,7 +216,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                     SizedBox(
                       width: 5,
                     ),
-                    Text(LawyerList[index]['discription'],
+                    Text(LawyerList[index]['description'],
                         style: TextStyle(
                             color: primary, fontSize: 13, letterSpacing: .3)),
                   ],
@@ -228,4 +252,15 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
       ),
     );
   }
+
+
+  void getData() {
+    databaseReference
+        .collection("Lawyers")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => print('my data ${f.data}}'));
+    });
+
+}
 }
