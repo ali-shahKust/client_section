@@ -3,8 +3,15 @@ import 'package:client_lawyer_project/search_lawyer_page.dart';
 import 'package:flutter/material.dart';
 
 class Describe_Offer extends StatelessWidget {
+
+//Map _map;
+//Describe_Offer(Map map){
+//  this._map = map;
+//}
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Stack(
       //  fit: StackFit.expand,

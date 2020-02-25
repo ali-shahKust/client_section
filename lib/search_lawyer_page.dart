@@ -6,16 +6,31 @@ import 'package:client_lawyer_project/constant.dart';
 
 class Search_Lawyer_Page extends StatefulWidget {
   Search_Lawyer_Page({Key key}) : super(key: key);
- // static final String path = "lib/src/pages/lists/list2.dart";
+
+  // static final String path = "lib/src/pages/lists/list2.dart";
 
   _Search_Lawyer_PageState createState() => _Search_Lawyer_PageState();
 }
 
 class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
-  final List<Map> LawyerList = [];
-  final primary =Constant.appColor;
+  final primary = Constant.appColor;
   final secondary = Constant.appColor;
   final databaseReference = Firestore.instance;
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  final List<Map> LawyerList = [
+    {
+      "username": "Jenny",
+      "type": "Type of Consultant",
+      "description": "Description",
+      "user_dp": "images/wallet2.png"
+    },
+  ];
 
 //  Future<List<String>> getData() async {
 //
@@ -63,12 +78,6 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
 //  ];
 
   @override
-  void initState() {
-    getData();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfff0f0f0),
@@ -78,15 +87,21 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
           width: MediaQuery.of(context).size.width,
           child: Stack(
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 145),
-                height: MediaQuery.of(context).size.height,
-                width: double.infinity,
-                child: ListView.builder(
-                    itemCount: LawyerList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return buildList(context, index);
-                    }),
+              LawyerList.isNotEmpty
+                  ? Container(
+                      padding: EdgeInsets.only(top: 145),
+                      height: MediaQuery.of(context).size.height,
+                      width: double.infinity,
+                      child: ListView.builder(
+                          itemCount: LawyerList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return buildList(context, index);
+                          }),
+                    )
+                  : Container(
+                child: Center(
+                  child: Text('No data'),
+                ),
               ),
               Container(
                 height: 140,
@@ -99,12 +114,11 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Center(
-                    child: Text('Requests',
+                    child: Text('Lawyers',
                         style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
-                            color: Colors.white)
-                    ),
+                            color: Colors.white)),
                   ),
                 ),
               ),
@@ -129,7 +143,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                               prefixIcon: Material(
                                 elevation: 0.0,
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(30)),
+                                    BorderRadius.all(Radius.circular(30)),
                                 child: Icon(Icons.search),
                               ),
                               border: InputBorder.none,
@@ -205,7 +219,6 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                 SizedBox(
                   height: 6,
                 ),
-
                 Row(
                   children: <Widget>[
                     Icon(
@@ -222,7 +235,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                   ],
                 ),
                 Padding(
-                    padding:EdgeInsets.only(top: 35),
+                    padding: EdgeInsets.only(top: 35),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -236,12 +249,12 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                               fontSize: 18),
                         ),
                         onPressed: () {
-                                     setState(() {
-                                       Navigator.push(
-                                           context,
-                                           MaterialPageRoute(
-                                               builder: (context) => Describe_Offer()));
-                                     });
+                          setState(() {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Describe_Offer()));
+                          });
                         },
                       ),
                     )),
@@ -253,14 +266,15 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
     );
   }
 
-
   void getData() {
     databaseReference
         .collection("Lawyers")
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) => print('my data ${f.data}}'));
+      snapshot.documents.forEach((f) => LawyerList.add(f.data));
+      print('my list of data is $LawyerList');
     });
 
-}
+    setState(() {});
+  }
 }
