@@ -16,7 +16,6 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
   final primary = Constant.appColor;
   final secondary = Constant.appColor;
   final databaseReference = Firestore.instance;
-
   @override
   void initState() {
     getData();
@@ -24,13 +23,9 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
   }
 
   final List<Map> LawyerList = [
-    {
-      "username": "Jenny",
-      "type": "Type of Consultant",
-      "description": "Description",
-      "user_dp": "images/wallet2.png"
-    },
   ];
+
+
 
 //  Future<List<String>> getData() async {
 //

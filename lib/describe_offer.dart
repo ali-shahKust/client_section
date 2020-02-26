@@ -4,35 +4,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Describe_Offer extends StatefulWidget {
+class Describe_Offer extends StatelessWidget {
+  final databaseReference = Firestore.instance;
+  final _descontroller = TextEditingController();
+  final _conscontroller = TextEditingController();
   Map _map;
-
-  Describe_Offer(Map map) {
+  Describe_Offer(Map map){
     this._map = map;
     print('my data is $_map');
+
+    _map['user_id'];
   }
 
   @override
-  _Describe_OfferState createState() => _Describe_OfferState();
-}
-
-class _Describe_OfferState extends State<Describe_Offer> {
-  String toUid = '';
-
-  final _consultantcontroller = TextEditingController();
-  final _Desciptioncontroller = TextEditingController();
-
-//@override
-//  void initState() {
-//    // TODO: implement initState
-//  String toUid = _map['user_id'];
-//
-//  super.initState();
-//  }
-  final databaseReference = Firestore.instance;
-
-  @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       body: Stack(
         //  fit: StackFit.expand,
@@ -56,44 +43,46 @@ class _Describe_OfferState extends State<Describe_Offer> {
                           style: TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.w800,
-                              color: Colors.white)),
+                              color: Colors.white)
+                      ),
                     ),
                   ),
                 ),
                 Container(
                   height: 80,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
                   child: Row(
                     children: <Widget>[
                       Expanded(
                           child: TextField(
-                        controller: _consultantcontroller,
-                        decoration: InputDecoration(hintText: 'Consultant'),
-                      )),
+                            controller : _conscontroller,
+                            decoration: InputDecoration(
+                              hintText: 'Consultant'
+                          ),)
+                      ),
                     ],
                   ),
                 ),
+                Container(padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0) ,
+                    child: Text("Description",style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w400
+                    ))),
                 Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                    child: Text("Description",
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.w400))),
-                Container(
-                  padding:
-                      EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                  padding: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
                   child: TextField(
-                    controller: _Desciptioncontroller,
+                    controller: _descontroller,
                     decoration: InputDecoration(
-                        hintText: 'Please Provide Your Decription'),
+                      hintText: 'Please Provide Your Decription'
+                  ),
                     textAlign: TextAlign.justify,
-                    style: TextStyle(color: Colors.grey.shade600),
+                    style: TextStyle(
+                        color: Colors.grey.shade600
+                    ),
                   ),
                 ),
                 Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -106,10 +95,8 @@ class _Describe_OfferState extends State<Describe_Offer> {
                               fontWeight: FontWeight.w700,
                               fontSize: 18),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            sendOfferReq();
-                          });
+                        onPressed: (){
+                         sendOfferReq();
                         },
                       ),
                     )),
@@ -117,7 +104,9 @@ class _Describe_OfferState extends State<Describe_Offer> {
             ),
           ),
         ],
+
       ),
+
     );
   }
 
@@ -135,14 +124,17 @@ class _Describe_OfferState extends State<Describe_Offer> {
     );
   }
 
-  void sendOfferReq() async {
-    String clientId = (await FirebaseAuth.instance.currentUser()).uid;
-    DocumentReference ref =
-        await databaseReference.collection("My Request").add({
-      'lawyer_uid': toUid,
-      'client_uid': clientId,
-      'consultant': _consultantcontroller.text,
-      'description': _Desciptioncontroller
+  void sendOfferReq() async{
+String myuid = _map['user_uid'];
+    print('lawyer ui is $myuid');
+    DocumentReference ref = await databaseReference.collection("My Request")
+        .add({
+      'lawyer_uid': _map['user_uid'],
+      'client_uid': (await FirebaseAuth.instance.currentUser()).uid,
+      'consultant' : _conscontroller.text,
+      'description': _descontroller.text
     });
   }
 }
+
+
