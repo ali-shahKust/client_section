@@ -42,7 +42,7 @@ class _Client_LoginState extends State<Client_Login> {
                       height: 20,
                     ),
                     Text(
-                      "Lawyer",
+                      "Client",
                       style: TextStyle(
                           color: Constant.appColor,
                           fontWeight: FontWeight.w700,

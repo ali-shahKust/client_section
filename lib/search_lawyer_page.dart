@@ -250,10 +250,13 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                         ),
                         onPressed: () {
                           setState(() {
+
+                            print(LawyerList[index].toString());
+
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Describe_Offer()));
+                                    builder: (context) => Describe_Offer(LawyerList[index])));
                           });
                         },
                       ),

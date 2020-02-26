@@ -232,6 +232,7 @@ class _Client_SignupState extends State<Client_Signup> {
         'username': _name,
         'email': _email,
         'password': _password,
+        'user_dp' : "default"
       });
 //        Firestore.instance.collection('users').document()
 //            .setData({ 'user_email': _email, 'user_password': _password , 'user_name' : _name});
