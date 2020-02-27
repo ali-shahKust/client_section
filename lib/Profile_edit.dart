@@ -189,7 +189,7 @@ class _Profile_SettingState extends State<Profile_Setting> {
 
   void getData() async {
     DocumentSnapshot mRef = await Firestore.instance
-        .collection("Lawyers")
+        .collection("Users")
         .document((await FirebaseAuth.instance.currentUser()).uid)
         .get();
     setState(() {
