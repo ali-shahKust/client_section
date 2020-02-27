@@ -59,16 +59,29 @@ String lawyer_id= '';
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(30),
                           bottomRight: Radius.circular(30))),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Center(
-                      child: Text('Client Requests',
-                          style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white)
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: GestureDetector(child: Icon(Icons.arrow_back,color: Colors.white,size: 30,),
+                          onTap: (){
+                            setState(() {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Search_Lawyer_Page()));
+                            });
+                          },),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: Center(
+                          child: Text('Client Requests',
+                              style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white)
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
