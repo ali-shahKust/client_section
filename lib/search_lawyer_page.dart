@@ -109,7 +109,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Center(
-                    child: Text('Lawyers',
+                    child: Text('Client',
                         style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
