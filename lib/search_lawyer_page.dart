@@ -270,9 +270,8 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) => LawyerList.add(f.data));
-      print('my list of data is $LawyerList');
+      setState(() {});
     });
 
-    setState(() {});
   }
 }

@@ -4,10 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Describe_Offer extends StatelessWidget {
-  final databaseReference = Firestore.instance;
-  final _descontroller = TextEditingController();
-  final _conscontroller = TextEditingController();
+class Describe_Offer extends StatefulWidget {
   Map _map;
   Describe_Offer(Map map){
     this._map = map;
@@ -15,6 +12,32 @@ class Describe_Offer extends StatelessWidget {
 
     _map['user_id'];
   }
+
+  @override
+  _Describe_OfferState createState() => _Describe_OfferState(_map);
+}
+
+class _Describe_OfferState extends State<Describe_Offer> {
+
+Map _map;
+
+_Describe_OfferState(this._map);
+
+String lawyer_id= '';
+
+@override
+  void initState() {
+    // TODO: implement initState
+  sendOfferReq();
+    super.initState();
+  }
+
+ // String lawyer_id = _map['user_id'];
+  final databaseReference = Firestore.instance;
+
+  final _descontroller = TextEditingController();
+
+  final _conscontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +148,11 @@ class Describe_Offer extends StatelessWidget {
   }
 
   void sendOfferReq() async{
-String myuid = _map['user_uid'];
-    print('lawyer ui is $myuid');
+    String law = _map['user_uid'];
+    print('lawyer id is$law');
+    print('my map data is $_map.toString()');
+    String scons = _conscontroller.text;
+    print('my descruotuib is $scons');
     DocumentReference ref = await databaseReference.collection("My Request")
         .add({
       'lawyer_uid': _map['user_uid'],
