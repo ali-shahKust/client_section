@@ -227,13 +227,16 @@ class _Client_SignupState extends State<Client_Signup> {
           .createUserWithEmailAndPassword(email: _email, password: _password);
 
       String mUid = (await FirebaseAuth.instance.currentUser()).uid;
-      await databaseReference.collection((await FirebaseAuth.instance.currentUser()).uid).add({
+
+      await databaseReference.collection("Users")
+          .document(mUid).setData({
         'user_uid':  (await FirebaseAuth.instance.currentUser()).uid,
         'username': _name,
         'email': _email,
         'password': _password,
         'user_dp' : "default"
       });
+
 //        Firestore.instance.collection('users').document()
 //            .setData({ 'user_email': _email, 'user_password': _password , 'user_name' : _name});
       Navigator.pushReplacement(

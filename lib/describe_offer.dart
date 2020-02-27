@@ -24,11 +24,12 @@ Map _map;
 _Describe_OfferState(this._map);
 
 String lawyer_id= '';
-
+String myname = '';
+DocumentSnapshot mRef;
 @override
   void initState() {
     // TODO: implement initState
-  sendOfferReq();
+    getInfo();
     super.initState();
   }
 
@@ -39,10 +40,9 @@ String lawyer_id= '';
 
   final _conscontroller = TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       body: Stack(
         //  fit: StackFit.expand,
@@ -148,19 +148,26 @@ String lawyer_id= '';
   }
 
   void sendOfferReq() async{
-    String law = _map['user_uid'];
-    print('lawyer id is$law');
-    print('my map data is $_map.toString()');
-    String scons = _conscontroller.text;
-    print('my descruotuib is $scons');
     DocumentReference ref = await databaseReference.collection("My Request")
         .add({
       'lawyer_uid': _map['user_uid'],
       'client_uid': (await FirebaseAuth.instance.currentUser()).uid,
+      'username': mRef['username'],
+      'user_dp': mRef['user_dp'],
       'consultant' : _conscontroller.text,
       'description': _descontroller.text
     });
   }
+void getInfo() async {
+   mRef = await Firestore.instance
+      .collection("Users")
+      .document((await FirebaseAuth.instance.currentUser()).uid)
+      .get();
+   setState(() {
+     print('xnxx ${mRef.data.toString()}');
+   });
+}
+
 }
 
 
