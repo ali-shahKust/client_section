@@ -7,6 +7,7 @@ import 'package:client_lawyer_project/constant.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
 import 'Profile_edit.dart';
+import 'chat_page.dart';
 
 
 class Search_Lawyer_Page extends StatefulWidget {
@@ -33,6 +34,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
   @override
   void initState() {
     getData();
+    myInfo();
     super.initState();
   }
 
@@ -266,9 +268,9 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
         .document((await FirebaseAuth.instance.currentUser()).uid)
         .get();
     setState(() {
-      myInfoRef['username'];
-      myInfoRef['about_yourself'];
-      myInfoRef['user_dp'];
+    myName=   myInfoRef['username'];
+      abtMe = myInfoRef['about_yourself'];
+     myDp = myInfoRef['user_dp'];
     });
   }
 
@@ -300,16 +302,17 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                       LinearGradient(colors: [active, Colors.white30])),
                   child: CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage(image),
+                    backgroundImage: myDp == null
+                        ? AssetImage('/images/1.jpg')
+                        : NetworkImage(myDp),
                   ),
                 ),
                 SizedBox(height: 5.0),
-                Text(
-                  "Ali shah",
+                Text(myName,
                   style: TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.w600),
                 ),
-                Text(
-                  "LPC",
+                abtMe == null ?
+                Text('No Details') : Text(abtMe,
                   style: TextStyle(
                       color: active,
                       fontSize: 16.0
@@ -319,7 +322,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                 GestureDetector(
                   onTap: (){
 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Search_Lawyer_Page()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Client_Chat_Page()));
                   },
                   child: _buildRow(Icons.message, "Chat",
                   ),
