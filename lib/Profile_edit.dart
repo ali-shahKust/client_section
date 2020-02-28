@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/client_login_page.dart';
 import 'package:client_lawyer_project/constant.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Profile_Setting extends StatefulWidget {
   @override
@@ -10,12 +14,19 @@ class Profile_Setting extends StatefulWidget {
 }
 
 class _Profile_SettingState extends State<Profile_Setting> {
+  bool isloading = true;
+  String dropdownValue = 'Major';
+  String mDp = '';
   String mName = '';
   String mType = '';
   String mPhoneNum = '';
   String mLicenceNumber = '';
   String mYearExperience = '';
   String mDescription = '';
+  DocumentSnapshot mRef;
+  File _image;
+  String _uploadedFileURL;
+  String url;
 
   final _namecontroller = TextEditingController();
   final _phonecontroller = TextEditingController();
@@ -32,7 +43,7 @@ class _Profile_SettingState extends State<Profile_Setting> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: ListView(
+      body:isloading ? Container() : ListView(
         children: <Widget>[
           Stack(
             children: <Widget>[
@@ -46,10 +57,18 @@ class _Profile_SettingState extends State<Profile_Setting> {
                   Container(
                       height: 90,
                       margin: EdgeInsets.only(top: 60),
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        //   child: Image.asset(),
+                      child: GestureDetector(
+                        onTap: (){
+                          uploadPic();
+                        },
+                        child: CircleAvatar(
+                          radius: 50,
+                        //  backgroundColor: Colors.white,
+                          backgroundImage: mDp == null
+                              ? AssetImage('/images/1.jpg')
+                              : NetworkImage(mDp),
+
+                        ),
                       )),
                   Padding(
                     padding: EdgeInsets.all(4),
@@ -65,8 +84,9 @@ class _Profile_SettingState extends State<Profile_Setting> {
                   Padding(
                     padding: EdgeInsets.all(4),
                   ),
-                  Text(
-                    mType,
+                  mType == null ?
+                  Text('No Details') : Text(mType
+                    ,
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w400,
@@ -193,8 +213,13 @@ class _Profile_SettingState extends State<Profile_Setting> {
         .document((await FirebaseAuth.instance.currentUser()).uid)
         .get();
     setState(() {
+      isloading = false;
       mName = mRef['username'];
       mType = mRef['about_yourself'];
+      mDp = mRef['user_dp'];
+
+      print('mref data $mRef');
+
     });
   }
 
@@ -210,5 +235,32 @@ class _Profile_SettingState extends State<Profile_Setting> {
     } catch (e) {
       print(e.message);
     }
+  }
+  FirebaseStorage _storage = FirebaseStorage.instance;
+
+  Future<Uri> uploadPic() async {
+
+    //Get the file from the image picker and store it
+    _image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    String mUid = (await FirebaseAuth.instance.currentUser()).uid;
+
+    //Create a reference to the location you want to upload to in firebase
+    StorageReference reference = _storage.ref().child("Profile_user/").child((await FirebaseAuth.instance.currentUser()).uid);
+
+    //Upload the file to firebase
+    StorageUploadTask uploadTask = reference.putFile(_image);
+    uploadTask.onComplete.then((result) async {
+      url = await result.ref.getDownloadURL();
+
+      await databaseReference.collection("Users").document(mUid).updateData({
+
+        'user_dp': url,
+      });
+      setState(() {
+
+      });
+    });
+
   }
 }

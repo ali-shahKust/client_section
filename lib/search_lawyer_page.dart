@@ -1,9 +1,12 @@
+import 'package:client_lawyer_project/client_login_page.dart';
 import 'package:client_lawyer_project/describe_offer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+
+import 'Profile_edit.dart';
 
 
 class Search_Lawyer_Page extends StatefulWidget {
@@ -18,6 +21,12 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
   final primary = Constant.appColor;
   final secondary = Constant.appColor;
   final databaseReference = Firestore.instance;
+
+  DocumentSnapshot myInfoRef;
+  String myName = '';
+  String abtMe = '';
+  String myDp = '';
+
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   final Color active = Colors.white;
   final Color divider = Colors.white;
@@ -30,52 +39,6 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
   final List<Map> LawyerList = [
   ];
 
-
-
-//  Future<List<String>> getData() async {
-//
-//    databaseReference
-//        .collection("Lawyers")
-//        .getDocuments()
-//        .then((QuerySnapshot snapshot) {
-//      snapshot.documents.forEach((f) =>
-//          print(f.data) ;
-//          //LawyerList.add(f.data));
-//
-//    });
-//  }
-//  final List<Map> LawyerList = [
-//
-//
-//    {
-//      "name": "Jenny",
-//      "type": "Type of Consultant",
-//      "discription": "Description",
-//      "logoText":
-//      "images/wallet2.png"
-//    },
-//    {
-//      "name": "charlys",
-//      "type":  "Type of Consultant",
-//      "discription": "Description",
-//      "logoText":
-//      "images/wallet2.png"
-//    },
-//    {
-//      "name": "Kinder Garden",
-//      "type": "Type of Consultant",
-//      "discription": "Description",
-//      "logoText":
-//      "images/wallet2.png"
-//    },
-//    {
-//      "name": "angela",
-//      "type": "Type of Consultant",
-//      "discription": "Description",
-//      "logoText":
-//      "images/wallet2.png"
-//    },
-//  ];
 
   @override
   Widget build(BuildContext context) {
@@ -297,6 +260,18 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
 
   }
 
+  void myInfo() async {
+    myInfoRef = await Firestore.instance
+        .collection("Users")
+        .document((await FirebaseAuth.instance.currentUser()).uid)
+        .get();
+    setState(() {
+      myInfoRef['username'];
+      myInfoRef['about_yourself'];
+      myInfoRef['user_dp'];
+    });
+  }
+
   _buildDrawer() {
     final String image = "images/1.jpg";
     return ClipPath(
@@ -341,23 +316,27 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                   ),
                 ),
                 SizedBox(height: 30.0),
-                _buildRow(Icons.message, "Chat",GestureDetector(onTap: (){
-                 setState(() {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => Search_Lawyer_Page()));
-                 });
-                },)),
-                _buildDivider(),
-                _buildRow(Icons.face, "Edit profile",GestureDetector(onTap: (){
-                  setState(() {
+                GestureDetector(
+                  onTap: (){
+
                     Navigator.push(context, MaterialPageRoute(builder: (context) => Search_Lawyer_Page()));
-                  });
-                },)),
+                  },
+                  child: _buildRow(Icons.message, "Chat",
+                  ),
+                ),
                 _buildDivider(),
-                _buildRow(Icons.label_outline, "Logout", GestureDetector(onTap: (){
-                  setState(() {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Search_Lawyer_Page()));
-                  });
-                },)),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Profile_Setting()));
+                  },
+                    child: _buildRow(Icons.face, "Edit profile",)),
+                _buildDivider(),
+                GestureDetector(
+                    onTap: (){
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Client_Login()));
+                    },
+                    child: _buildRow(Icons.label_outline, "Logout",)),
                 _buildDivider(),
 
               ],
@@ -374,7 +353,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
     );
   }
 
-  Widget _buildRow(IconData icon, String title, GestureDetector press, {bool showBadge = false}) {
+  Widget _buildRow(IconData icon, String title, {bool showBadge = false}) {
     final TextStyle tStyle = TextStyle(color: active, fontSize: 16.0);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 5.0),

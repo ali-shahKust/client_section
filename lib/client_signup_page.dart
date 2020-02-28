@@ -43,7 +43,7 @@ class _Client_SignupState extends State<Client_Signup> {
                       height: 20,
                     ),
                     Text(
-                      "Lawyer",
+                      "Client",
                       style: TextStyle(
                           color: Constant.appColor,
                           fontWeight: FontWeight.w700,
@@ -234,11 +234,9 @@ class _Client_SignupState extends State<Client_Signup> {
         'username': _name,
         'email': _email,
         'password': _password,
-        'user_dp' : "default"
+        'user_dp' : ""
       });
 
-//        Firestore.instance.collection('users').document()
-//            .setData({ 'user_email': _email, 'user_password': _password , 'user_name' : _name});
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Client_Login()));
     } catch (e) {
