@@ -8,6 +8,7 @@ import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
 import 'Profile_edit.dart';
 import 'chat_page.dart';
+import 'client_session_page.dart';
 
 
 class Search_Lawyer_Page extends StatefulWidget {
@@ -322,7 +323,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                 GestureDetector(
                   onTap: (){
 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Client_Chat_Page()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Session_Page()));
                   },
                   child: _buildRow(Icons.message, "Chat",
                   ),
