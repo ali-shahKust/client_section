@@ -2,6 +2,7 @@ import 'package:client_lawyer_project/client_login_page.dart';
 import 'package:client_lawyer_project/describe_offer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'Profile_edit.dart';
 import 'chat_page.dart';
 import 'client_session_page.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 class Search_Lawyer_Page extends StatefulWidget {
@@ -24,10 +26,13 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
   final secondary = Constant.appColor;
   final databaseReference = Firestore.instance;
 
+
   DocumentSnapshot myInfoRef;
   String myName = '';
   String abtMe = '';
   String myDp = '';
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
 
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   final Color active = Colors.white;
@@ -43,102 +48,137 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
   ];
 
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfff0f0f0),
       key: _key,
       drawer: _buildDrawer(),
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Stack(
-            children: <Widget>[
-              LawyerList.isNotEmpty
-                  ? Container(
-                      padding: EdgeInsets.only(top: 145),
-                      height: MediaQuery.of(context).size.height,
-                      width: double.infinity,
-                      child: ListView.builder(
-                          itemCount: LawyerList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return buildList(context, index);
-                          }),
-                    )
-                  : Container(
-                child: Center(
-                  child: Text('No data'),
-                ),
-              ),
-              Container(
-                height: 140,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: primary,
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30))),
-                child: Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: IconButton(
-                        icon: Icon(Icons.menu,color: Colors.white,),
-                        onPressed: () {
-                          _key.currentState.openDrawer();
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Center(
-                        child: Text('Client',
-                            style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white)),
-                      ),
-                    ),
+      body: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: WaterDropHeader(),
+        footer: CustomFooter(
+          builder: (BuildContext context,LoadStatus mode){
+            Widget body ;
+            if(mode==LoadStatus.idle){
+              body =  Text("pull up load");
+            }
+            else if(mode==LoadStatus.loading){
+              body =  CupertinoActivityIndicator();
+            }
+            else if(mode == LoadStatus.failed){
+              body = Text("Load Failed!Click retry!");
+            }
+            else if(mode == LoadStatus.canLoading){
+              body = Text("release to load more");
+            }
+            else{
+              body = Text("No more Data");
+            }
+            return Container(
+              height: 55.0,
+              child: Center(child:body),
+            );
+          },
+        ),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: _onLoading,
 
-                  ],
-                ),
 
-              ),
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 110,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Material(
-                        elevation: 5.0,
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                        child: TextField(
-                          // controller: TextEditingController(text: locations[0]),
-                          cursorColor: Theme.of(context).primaryColor,
-                          decoration: InputDecoration(
-                              hintText: "Search Lawyer",
-                              hintStyle: TextStyle(
-                                  color: Colors.black38, fontSize: 16),
-                              prefixIcon: Material(
-                                elevation: 0.0,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(30)),
-                                child: Icon(Icons.search),
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 13)),
+        child: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Stack(
+              children: <Widget>[
+                LawyerList.isNotEmpty
+                    ? Container(
+                        padding: EdgeInsets.only(top: 145),
+                        height: MediaQuery.of(context).size.height,
+                        width: double.infinity,
+                        child: ListView.builder(
+                            itemCount: LawyerList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return buildList(context, index);
+                            }),
+                      )
+                    : Container(
+                  child: Center(
+                    child: Text('No data'),
+                  ),
+                ),
+                Container(
+                  height: 140,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      color: primary,
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30))),
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: IconButton(
+                          icon: Icon(Icons.menu,color: Colors.white,),
+                          onPressed: () {
+                            _key.currentState.openDrawer();
+                          },
                         ),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: Center(
+                          child: Text('Client',
+                              style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white)),
+                        ),
+                      ),
+
+                    ],
+                  ),
+
                 ),
-              )
-            ],
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 110,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Material(
+                          elevation: 5.0,
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          child: TextField(
+                            // controller: TextEditingController(text: locations[0]),
+                            cursorColor: Theme.of(context).primaryColor,
+                            decoration: InputDecoration(
+                                hintText: "Search Lawyer",
+                                hintStyle: TextStyle(
+                                    color: Colors.black38, fontSize: 16),
+                                prefixIcon: Material(
+                                  elevation: 0.0,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30)),
+                                  child: Icon(Icons.search),
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 25, vertical: 13)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -152,7 +192,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
         color: Colors.white,
       ),
       width: double.infinity,
-      height: 200,
+      height: 210,
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Row(
@@ -205,6 +245,24 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                 Row(
                   children: <Widget>[
                     Icon(
+                      Icons.attach_money,
+                      color: secondary,
+                      size: 20,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(LawyerList[index]['fees'],
+                        style: TextStyle(
+                            color: primary, fontSize: 13, letterSpacing: .3)),
+                  ],
+                ),
+                SizedBox(
+                  height: 6,
+                ),
+                Row(
+                  children: <Widget>[
+                    Icon(
                       Icons.description,
                       color: secondary,
                       size: 20,
@@ -212,9 +270,11 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                     SizedBox(
                       width: 5,
                     ),
-                    Text(LawyerList[index]['description'],
-                        style: TextStyle(
-                            color: primary, fontSize: 13, letterSpacing: .3)),
+                    Flexible(
+                      child: Text(LawyerList[index]['description'],
+                          style: TextStyle(
+                              color: primary, fontSize: 13, letterSpacing: .3)),
+                    ),
                   ],
                 ),
                 Padding(
@@ -273,6 +333,23 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
       abtMe = myInfoRef['about_yourself'];
      myDp = myInfoRef['user_dp'];
     });
+  }
+  void _onRefresh() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+    if(mounted)
+      setState(() {
+
+      });
+    _refreshController.loadComplete();
   }
 
   _buildDrawer() {

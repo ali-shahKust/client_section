@@ -219,6 +219,9 @@ class _Client_LoginState extends State<Client_Login> {
         });
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Search_Lawyer_Page()));
       }catch(e){
+        pr.hide().then((isHidden) {
+          print(isHidden);
+        });
         print(e.message);
       }
     }
