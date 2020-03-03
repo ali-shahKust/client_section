@@ -14,11 +14,12 @@ class Session_Page extends StatefulWidget {
 }
 
 class _Session_PageState extends State<Session_Page> {
-  final primary =Constant.appColor;
+  final primary = Constant.appColor;
   final secondary = Constant.appColor;
   final databaseReference = Firestore.instance;
-  String dId='';
-
+  String dId = '';
+  final lawyerRef = Firestore.instance;
+  final List<DocumentSnapshot> LawyerNames = [];
   final List<DocumentSnapshot> LawyerList = [
   ];
 
@@ -35,13 +36,22 @@ class _Session_PageState extends State<Session_Page> {
       backgroundColor: Color(0xfff0f0f0),
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
           child: Stack(
             children: <Widget>[
               Container(
                 padding: EdgeInsets.only(top: 145),
-                height: MediaQuery.of(context).size.height,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height,
                 width: double.infinity,
                 child: ListView.builder(
                     itemCount: LawyerList.length,
@@ -60,7 +70,7 @@ class _Session_PageState extends State<Session_Page> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Center(
-                    child: Text('Sessions',
+                    child: Text('Chats',
                         style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
@@ -89,47 +99,47 @@ class _Session_PageState extends State<Session_Page> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-//          Container(
-//            width: 50,
-//            height: 50,
-//            margin: EdgeInsets.only(right: 15),
-//            decoration: BoxDecoration(
-//              borderRadius: BorderRadius.circular(50),
-//              border: Border.all(width: 3, color: secondary),
-//              image: DecorationImage(
-//                  image: NetworkImage(LawyerList[index]['user_dp']),
-//                  fit: BoxFit.fill),
-//            ),
-//          ),
+          Container(
+            width: 50,
+            height: 50,
+            margin: EdgeInsets.only(right: 15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(width: 3, color: secondary),
+              image: DecorationImage(
+                  image: NetworkImage(LawyerList[index]['lawyer_dp']),
+                  fit: BoxFit.fill),
+            ),
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-//                Text(
-//                  LawyerList[index]['username'],
-//                  style: TextStyle(
-//                      color: primary,
-//                      fontWeight: FontWeight.bold,
-//                      fontSize: 18),
-//                ),
-//                SizedBox(
-//                  height: 6,
-//                ),
-//                Row(
-//                  children: <Widget>[
-//                    Icon(
-//                      Icons.merge_type,
-//                      color: secondary,
-//                      size: 20,
-//                    ),
-//                    SizedBox(
-//                      width: 5,
-//                    ),
-//                  ],
-//                ),
-//                SizedBox(
-//                  height: 6,
-//                ),
+                Text(
+                  LawyerList[index]['lawyer_name'],
+                  style: TextStyle(
+                      color: primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                ),
+                SizedBox(
+                  height: 6,
+                ),
+                Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.merge_type,
+                      color: secondary,
+                      size: 20,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 6,
+                ),
 
                 Row(
                   children: <Widget>[
@@ -141,32 +151,37 @@ class _Session_PageState extends State<Session_Page> {
                     SizedBox(
                       width: 5,
                     ),
-                    Text(LawyerList[index]['description'],
-                        style: TextStyle(
-                            color: primary, fontSize: 13, letterSpacing: .3)),
+                    Flexible(
+                      child: Text(
+                          LawyerList[index]['description'],
+                          style: TextStyle(
+                              color: primary, fontSize: 13, letterSpacing: .3)),
+                    ),
                   ],
                 ),
                 Padding(
-                    padding:EdgeInsets.only(top: 35),
+                    padding: EdgeInsets.only(top: 35),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           color: Constant.appColor),
                       child: FlatButton(
                         child: Text(
-                          "Start Session",
+                          "Start Chat",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
                               fontSize: 18),
                         ),
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder:(context) => ChatScreen(
-                              name: LawyerList[index].data['username'],
-                              photoUrl: LawyerList[index].data['user_dp'],
-                              receiverUid:
-                              LawyerList[index].data['lawyer_uid']
-                          )));
+                          Navigator.push(context, MaterialPageRoute(builder: (
+                              context) =>
+                              ChatScreen(
+                                  name: LawyerList[index].data['username'],
+                                  photoUrl: LawyerList[index].data['user_dp'],
+                                  receiverUid:
+                                  LawyerList[index].data['lawyer_uid']
+                              )));
                         },
                       ),
                     )),
@@ -181,13 +196,15 @@ class _Session_PageState extends State<Session_Page> {
   void getData() async {
     String uId = (await FirebaseAuth.instance.currentUser()).uid;
     databaseReference
-        .collection("My Session").where('client_uid', isEqualTo: uId)
+        .collection("start_chat").where('client_uid', isEqualTo: uId)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) => LawyerList.add(f));
+      setState(() {
 
-      setState(() {});
+      });
     });
   }
+
 
 }

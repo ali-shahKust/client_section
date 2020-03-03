@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/client_login_page.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class Profile_Setting extends StatefulWidget {
   @override
@@ -32,7 +33,7 @@ class _Profile_SettingState extends State<Profile_Setting> {
   final _phonecontroller = TextEditingController();
   final _descriptioncontroller = TextEditingController();
   final databaseReference = Firestore.instance;
-
+  ProgressDialog pr;
   @override
   void initState() {
     getData();
@@ -41,6 +42,8 @@ class _Profile_SettingState extends State<Profile_Setting> {
 
   @override
   Widget build(BuildContext context) {
+
+    pr = new ProgressDialog(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body:isloading ? Container() : ListView(
@@ -225,6 +228,22 @@ class _Profile_SettingState extends State<Profile_Setting> {
 
   void createRecord() async {
     try {
+
+      pr.style(
+          message: 'Updating Profile...',
+          borderRadius: 10.0,
+          backgroundColor: Colors.white,
+          progressWidget: CircularProgressIndicator(),
+          elevation: 10.0,
+          insetAnimCurve: Curves.easeInOut,
+          progress: 0.0,
+          maxProgress: 100.0,
+          progressTextStyle: TextStyle(
+              color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+          messageTextStyle: TextStyle(
+              color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
+      );
+      await pr.show();
       String mUid = (await FirebaseAuth.instance.currentUser()).uid;
       //Firestore
       await databaseReference.collection("Users").document(mUid).setData({
@@ -232,6 +251,9 @@ class _Profile_SettingState extends State<Profile_Setting> {
         'phonenumber': _phonecontroller.text,
         'about_yourself': _descriptioncontroller.text,
       }, merge: true);
+      pr.hide().then((isHidden) {
+        print(isHidden);
+      });
     } catch (e) {
       print(e.message);
     }
@@ -239,18 +261,46 @@ class _Profile_SettingState extends State<Profile_Setting> {
   FirebaseStorage _storage = FirebaseStorage.instance;
 
   Future<Uri> uploadPic() async {
-
+    pr.style(
+        message: 'Uploading Image...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
     //Get the file from the image picker and store it
     _image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     String mUid = (await FirebaseAuth.instance.currentUser()).uid;
-
+    await pr.show();
     //Create a reference to the location you want to upload to in firebase
     StorageReference reference = _storage.ref().child("Profile_user/").child((await FirebaseAuth.instance.currentUser()).uid);
 
     //Upload the file to firebase
     StorageUploadTask uploadTask = reference.putFile(_image);
     uploadTask.onComplete.then((result) async {
+      pr.update(
+        progress: 50.0,
+        message: "Please wait...",
+        progressWidget: Container(
+            padding: EdgeInsets.all(8.0), child: CircularProgressIndicator()),
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600),
+      );
+
+      pr.hide().then((isHidden) {
+        print(isHidden);
+      });
       url = await result.ref.getDownloadURL();
 
       await databaseReference.collection("Users").document(mUid).updateData({

@@ -28,7 +28,8 @@ dependencies:
   flutter_custom_clippers: ^1.1.0
   firebase_storage: ^3.1.1
   image_picker: ^0.6.0+17
-
+  shared_preferences: ^0.5.6+1
+  progress_dialog: ^1.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -25,6 +25,7 @@ _Describe_OfferState(this._map);
 
 String lawyer_id= '';
 String myname = '';
+String lawyer_name ='';
 DocumentSnapshot mRef;
 @override
   void initState() {
@@ -168,7 +169,9 @@ DocumentSnapshot mRef;
       'username': mRef['username'],
       'user_dp': mRef['user_dp'],
       'consultant' : _conscontroller.text,
-      'description': _descontroller.text
+      'description': _descontroller.text,
+      'lawyer_name': _map['username'],
+      'lawyer_dp':_map['user_dp']
     });
   }
 void getInfo() async {
