@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:client_lawyer_project/full_screen_image.dart';
 import 'package:client_lawyer_project/models/message.dart';
+import 'package:client_lawyer_project/pdf_view.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -159,6 +161,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 pickImage();
               },
             ),
+          ),  Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: IconButton(
+              splashColor: Colors.white,
+              icon: Icon(
+                Icons.attach_file,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                pickDoc();
+              },
+            ),
           ),
           Flexible(
             child: TextFormField(
@@ -214,7 +228,57 @@ class _ChatScreenState extends State<ChatScreen> {
     uploadImageToDb(url);
     return url;
   }
+  Future<String> pickDoc() async {
+    File file =
+    await FilePicker.getFile(type: FileType.CUSTOM, fileExtension: 'pdf');
 
+    _storageReference = FirebaseStorage.instance
+        .ref()
+        .child('${DateTime.now().millisecondsSinceEpoch}');
+    StorageUploadTask storageUploadTask = _storageReference.putFile(file);
+    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+
+    print("URL: $url");
+    uploadDocumentToDb(url);
+    return url;
+  }
+
+  void uploadDocumentToDb(String downloadUrl) {
+    _message = Message.withoutMessage(
+        receiverUid: widget.receiverUid,
+        senderUid: _senderuid,
+        photoUrl: downloadUrl,
+        timestamp: FieldValue.serverTimestamp(),
+        type: 'image');
+
+
+    var map = Map<String, dynamic>();
+//    map['senderUid'] = _message.senderUid;
+//    map['receiverUid'] = _message.receiverUid;
+//    map['type'] = _message.type;
+//    map['timestamp'] = _message.timestamp;
+    map['photoUrl'] = _message.photoUrl;
+    map['timestamp'] = Timestamp.now();
+    map['senderUid'] = _message.senderUid;
+    map['receiverUid'] = _message.receiverUid;
+    map['type'] = 'doc';
+
+    print("Map : ${map}");
+    Firestore.instance
+        .collection("messages")
+        .document(_message.receiverUid).collection('recent_chats').document(
+        _message.senderUid).setData(
+        map).then((myFun) {
+//         Map newMap = new Map<String , Object>();
+//         newMap['message'] ='hello';
+//         newMap['hello'] = 'world';
+
+      Firestore.instance
+          .collection("messages")
+          .document(_message.receiverUid).collection('recent_chats').document(
+          _message.senderUid).collection("messages").add(map);
+    });
+  }
   void uploadImageToDb(String downloadUrl) {
 
     _message = Message.withoutMessage(
@@ -380,12 +444,30 @@ class _ChatScreenState extends State<ChatScreen> {
                       fontWeight: FontWeight.bold),
                 ),
                 snapshot['type'] == 'text'
-                    ? Container(
-                      child: new Text(
+                    ? new Text(
                   snapshot['message'],
-                  style: TextStyle(color: Colors.black, fontSize: 14.0),
-                ),
-                    )
+                  style:
+                  TextStyle(color: Colors.black, fontSize: 14.0),
+                )
+                    : snapshot['type'] == 'doc'
+                    ? Container(
+                  height: 50,
+                  width: 50,
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => Pdf_viewer(
+                                myUrl: snapshot['photoUrl'],
+                              )));
+                    },
+                    icon: Icon(
+                      Icons.picture_as_pdf,
+                      color: Colors.red,
+                    ),
+                  ),
+                )
                     : InkWell(
                   onTap: (() {
                     Navigator.push(

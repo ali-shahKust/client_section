@@ -135,6 +135,10 @@ DocumentSnapshot mRef;
                         ),
                         onPressed: (){
                          sendOfferReq();
+                         final snackBar = SnackBar(content: Text('Offer Sent'));
+                         Scaffold.of(context).showSnackBar(snackBar);
+
+                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> ClientHomePage()));
                         },
                       ),
                     )),
@@ -176,10 +180,7 @@ DocumentSnapshot mRef;
 
     });
 
-    final snackBar = SnackBar(content: Text('Offer Sent'));
-    Scaffold.of(context).showSnackBar(snackBar);
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> ClientHomePage()));
   }
 void getInfo() async {
    mRef = await Firestore.instance
