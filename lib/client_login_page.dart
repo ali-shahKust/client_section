@@ -142,18 +142,18 @@ class _Client_LoginState extends State<Client_Login> {
                   onPressed: signIn,
                 ),
               )),
-          SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: Text(
-              "FORGET PASSWORD ?",
-              style: TextStyle(
-                  color: Constant.appColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700),
-            ),
-          ),
+//          SizedBox(
+//            height: 20,
+//          ),
+//          Center(
+//            child: Text(
+//              "FORGET PASSWORD ?",
+//              style: TextStyle(
+//                  color: Constant.appColor,
+//                  fontSize: 12,
+//                  fontWeight: FontWeight.w700),
+//            ),
+//          ),
           SizedBox(
             height: 40,
           ),

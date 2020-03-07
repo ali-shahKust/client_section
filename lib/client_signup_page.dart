@@ -171,18 +171,18 @@ class _Client_SignupState extends State<Client_Signup> {
                   },
                 ),
               )),
-          SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: Text(
-              "FORGET PASSWORD ?",
-              style: TextStyle(
-                  color: Constant.appColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700),
-            ),
-          ),
+//          SizedBox(
+//            height: 20,
+//          ),
+//          Center(
+//            child: Text(
+//              "FORGET PASSWORD ?",
+//              style: TextStyle(
+//                  color: Constant.appColor,
+//                  fontSize: 12,
+//                  fontWeight: FontWeight.w700),
+//            ),
+//          ),
           SizedBox(
             height: 40,
           ),
@@ -259,6 +259,9 @@ class _Client_SignupState extends State<Client_Signup> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Client_Login()));
     } catch (e) {
+      pr.hide().then((isHidden) {
+        print(isHidden);
+      });
       print(e.message);
     }
   }

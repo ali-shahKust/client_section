@@ -6,12 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-
 import 'Profile_edit.dart';
 import 'chat_page.dart';
 import 'client_session_page.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 
 class Search_Lawyer_Page extends StatefulWidget {
   Search_Lawyer_Page({Key key}) : super(key: key);
@@ -26,17 +24,17 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
   final secondary = Constant.appColor;
   final databaseReference = Firestore.instance;
 
-
   DocumentSnapshot myInfoRef;
   String myName = '';
   String abtMe = '';
   String myDp = '';
   RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   final Color active = Colors.white;
   final Color divider = Colors.white;
+
   @override
   void initState() {
     getData();
@@ -44,10 +42,19 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
     super.initState();
   }
 
-  final List<Map> LawyerList = [
-  ];
+  final List<Map> LawyerList = [];
+  List<Map> _filteredList = List();
 
-
+  _filterItems(String val) {
+    _filteredList.clear();
+    for (var i in LawyerList) {
+      var name = i['username'].toString().toLowerCase();
+      if (name == val || name.contains(val)) {
+        _filteredList.add(i);
+      }
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,34 +67,28 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
         enablePullUp: true,
         header: WaterDropHeader(),
         footer: CustomFooter(
-          builder: (BuildContext context,LoadStatus mode){
-            Widget body ;
-            if(mode==LoadStatus.idle){
-              body =  Text("pull up load");
-            }
-            else if(mode==LoadStatus.loading){
-              body =  CupertinoActivityIndicator();
-            }
-            else if(mode == LoadStatus.failed){
+          builder: (BuildContext context, LoadStatus mode) {
+            Widget body;
+            if (mode == LoadStatus.idle) {
+              body = Text("pull up load");
+            } else if (mode == LoadStatus.loading) {
+              body = CupertinoActivityIndicator();
+            } else if (mode == LoadStatus.failed) {
               body = Text("Load Failed!Click retry!");
-            }
-            else if(mode == LoadStatus.canLoading){
+            } else if (mode == LoadStatus.canLoading) {
               body = Text("release to load more");
-            }
-            else{
+            } else {
               body = Text("No more Data");
             }
             return Container(
               height: 55.0,
-              child: Center(child:body),
+              child: Center(child: body),
             );
           },
         ),
         controller: _refreshController,
         onRefresh: _onRefresh,
         onLoading: _onLoading,
-
-
         child: SingleChildScrollView(
           child: Container(
             height: MediaQuery.of(context).size.height,
@@ -100,16 +101,18 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                         height: MediaQuery.of(context).size.height,
                         width: double.infinity,
                         child: ListView.builder(
-                            itemCount: LawyerList.length,
+                            itemCount: _filteredList.isEmpty
+                                ? LawyerList.length
+                                : _filteredList.length,
                             itemBuilder: (BuildContext context, int index) {
                               return buildList(context, index);
                             }),
                       )
                     : Container(
-                  child: Center(
-                    child: Text('No data'),
-                  ),
-                ),
+                        child: Center(
+                          child: Text('No data'),
+                        ),
+                      ),
                 Container(
                   height: 140,
                   width: double.infinity,
@@ -123,7 +126,10 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: IconButton(
-                          icon: Icon(Icons.menu,color: Colors.white,),
+                          icon: Icon(
+                            Icons.menu,
+                            color: Colors.white,
+                          ),
                           onPressed: () {
                             _key.currentState.openDrawer();
                           },
@@ -139,10 +145,8 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                                   color: Colors.white)),
                         ),
                       ),
-
                     ],
                   ),
-
                 ),
                 Container(
                   child: Column(
@@ -156,6 +160,9 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                           elevation: 5.0,
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                           child: TextField(
+                            onChanged: (val) {
+                              _filterItems(val);
+                            },
                             // controller: TextEditingController(text: locations[0]),
                             cursorColor: Theme.of(context).primaryColor,
                             decoration: InputDecoration(
@@ -206,7 +213,14 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
               borderRadius: BorderRadius.circular(50),
               border: Border.all(width: 3, color: secondary),
               image: DecorationImage(
-                  image: NetworkImage(LawyerList[index]['user_dp']),
+                  image: (_filteredList.isEmpty
+                              ? LawyerList[index]['user_dp']
+                              : _filteredList[index]['user_dp']) ==
+                          null
+                      ? AssetImage('images/1.jpg')
+                      : NetworkImage(_filteredList.isEmpty
+                          ? LawyerList[index]['user_dp']
+                          : _filteredList[index]['user_dp']),
                   fit: BoxFit.fill),
             ),
           ),
@@ -215,7 +229,9 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  LawyerList[index]['username'],
+                  _filteredList.isEmpty
+                      ? LawyerList[index]['username']
+                      : _filteredList[index]['username'],
                   style: TextStyle(
                       color: primary,
                       fontWeight: FontWeight.bold,
@@ -234,7 +250,10 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                     SizedBox(
                       width: 5,
                     ),
-                    Text(LawyerList[index]['type'],
+                    Text(
+                        _filteredList.isEmpty
+                            ? LawyerList[index]['type']
+                            : _filteredList[index]['type'],
                         style: TextStyle(
                             color: primary, fontSize: 13, letterSpacing: .3)),
                   ],
@@ -252,7 +271,10 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                     SizedBox(
                       width: 5,
                     ),
-                    Text(LawyerList[index]['fees'],
+                    Text(
+                        _filteredList.isEmpty
+                            ? LawyerList[index]['fees']
+                            : _filteredList[index]['fees'],
                         style: TextStyle(
                             color: primary, fontSize: 13, letterSpacing: .3)),
                   ],
@@ -271,7 +293,10 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                       width: 5,
                     ),
                     Flexible(
-                      child: Text(LawyerList[index]['description'],
+                      child: Text(
+                          _filteredList.isEmpty
+                              ? LawyerList[index]['description']
+                              : _filteredList[index]['description'],
                           style: TextStyle(
                               color: primary, fontSize: 13, letterSpacing: .3)),
                     ),
@@ -293,13 +318,13 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                         ),
                         onPressed: () {
                           setState(() {
-
                             print(LawyerList[index].toString());
 
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Describe_Offer(LawyerList[index])));
+                                    builder: (context) =>
+                                        Describe_Offer(LawyerList[index])));
                           });
                         },
                       ),
@@ -320,7 +345,6 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
       snapshot.documents.forEach((f) => LawyerList.add(f.data));
       setState(() {});
     });
-
   }
 
   void myInfo() async {
@@ -329,26 +353,24 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
         .document((await FirebaseAuth.instance.currentUser()).uid)
         .get();
     setState(() {
-    myName=   myInfoRef['username'];
+      myName = myInfoRef['username'];
       abtMe = myInfoRef['about_yourself'];
-     myDp = myInfoRef['user_dp'];
+      myDp = myInfoRef['user_dp'];
     });
   }
-  void _onRefresh() async{
+
+  void _onRefresh() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use loadFailed(),if no data return,use LoadNodata()
-    if(mounted)
-      setState(() {
-
-      });
+    if (mounted) setState(() {});
     _refreshController.loadComplete();
   }
 
@@ -357,27 +379,21 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
     return ClipPath(
       clipper: OvalRightBorderClipper(),
       child: Container(
-        padding: const EdgeInsets.only(left: 16.0,right: 40),
+        padding: const EdgeInsets.only(left: 16.0, right: 40),
         decoration: BoxDecoration(
-            color: primary,
-            boxShadow: [
-              BoxShadow(color: Colors.black45)
-            ]
-        ),
+            color: primary, boxShadow: [BoxShadow(color: Colors.black45)]),
         width: 300,
-
         child: SafeArea(
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-
                 Container(
                   height: 90,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient:
-                      LinearGradient(colors: [active, Colors.white30])),
+                          LinearGradient(colors: [active, Colors.white30])),
                   child: CircleAvatar(
                     radius: 40,
                     backgroundImage: myDp == null
@@ -386,40 +402,58 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                   ),
                 ),
                 SizedBox(height: 5.0),
-                Text(myName,
-                  style: TextStyle(color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.w600),
-                ),
-                abtMe == null ?
-                Text('No Details') : Text(abtMe,
+                Text(
+                  myName,
                   style: TextStyle(
-                      color: active,
-                      fontSize: 16.0
-                  ),
+                      color: Colors.white,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600),
                 ),
+                abtMe == null
+                    ? Text('No Details')
+                    : Text(
+                        abtMe,
+                        style: TextStyle(color: active, fontSize: 16.0),
+                      ),
                 SizedBox(height: 30.0),
                 GestureDetector(
-                  onTap: (){
-
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Session_Page()));
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Session_Page()));
                   },
-                  child: _buildRow(Icons.message, "Chat",
+                  child: _buildRow(
+                    Icons.message,
+                    "Chat",
                   ),
                 ),
                 _buildDivider(),
                 GestureDetector(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Profile_Setting()));
-                  },
-                    child: _buildRow(Icons.face, "Edit profile",)),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Profile_Setting()));
+                    },
+                    child: _buildRow(
+                      Icons.face,
+                      "Edit profile",
+                    )),
                 _buildDivider(),
                 GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       FirebaseAuth.instance.signOut();
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Client_Login()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Client_Login()));
                     },
-                    child: _buildRow(Icons.label_outline, "Logout",)),
+                    child: _buildRow(
+                      Icons.label_outline,
+                      "Logout",
+                    )),
                 _buildDivider(),
-
               ],
             ),
           ),
@@ -439,12 +473,16 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Row(children: [
-        Icon(icon, color: active,),
+        Icon(
+          icon,
+          color: active,
+        ),
         SizedBox(width: 10.0),
-        Text(title, style: tStyle,),
+        Text(
+          title,
+          style: tStyle,
+        ),
         Spacer(),
-
-
       ]),
     );
   }
