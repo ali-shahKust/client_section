@@ -6,6 +6,8 @@ import 'package:client_lawyer_project/constant.dart';
 import 'package:client_lawyer_project/client_signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+
+import 'homepage.dart';
 class Client_Login extends StatefulWidget {
   @override
   _Client_LoginState createState() => _Client_LoginState();
@@ -217,7 +219,7 @@ class _Client_LoginState extends State<Client_Login> {
         pr.hide().then((isHidden) {
           print(isHidden);
         });
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Search_Lawyer_Page()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ClientHomePage()));
       }catch(e){
         pr.hide().then((isHidden) {
           print(isHidden);

@@ -1,4 +1,5 @@
 import 'package:client_lawyer_project/constant.dart';
+import 'package:client_lawyer_project/homepage.dart';
 import 'package:client_lawyer_project/search_lawyer_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -172,7 +173,13 @@ DocumentSnapshot mRef;
       'description': _descontroller.text,
       'lawyer_name': _map['username'],
       'lawyer_dp':_map['user_dp']
+
     });
+
+    final snackBar = SnackBar(content: Text('Offer Sent'));
+    Scaffold.of(context).showSnackBar(snackBar);
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> ClientHomePage()));
   }
 void getInfo() async {
    mRef = await Firestore.instance

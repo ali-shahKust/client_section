@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'Profile_edit.dart';
-import 'chat_page.dart';
-import 'client_session_page.dart';
+import 'accepted_request.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Search_Lawyer_Page extends StatefulWidget {
@@ -421,7 +420,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Session_Page()));
+                            builder: (context) => ChatList()));
                   },
                   child: _buildRow(
                     Icons.message,
