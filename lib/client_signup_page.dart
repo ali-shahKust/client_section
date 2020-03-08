@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/client_login_page.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+
+import 'Profile_edit.dart';
 class Client_Signup extends StatefulWidget {
   @override
   _Client_SignupState createState() => _Client_SignupState();
@@ -257,7 +259,7 @@ class _Client_SignupState extends State<Client_Signup> {
         print(isHidden);
       });
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Client_Login()));
+          context, MaterialPageRoute(builder: (context) => Profile_Setting()));
     } catch (e) {
       pr.hide().then((isHidden) {
         print(isHidden);

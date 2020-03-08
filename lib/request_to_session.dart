@@ -2,8 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
+import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
+import 'Profile_edit.dart';
+import 'accepted_request.dart';
 import 'client_chat_page.dart';
+import 'client_login_page.dart';
 
 class Request_toSession extends StatefulWidget {
   Request_toSession({Key key}) : super(key: key);
@@ -18,11 +22,20 @@ class _Request_toSessionState extends State<Request_toSession> {
   final databaseReference = Firestore.instance;
   final List<DocumentSnapshot> LawyerList = [
   ];
+  String myName = '';
+  String abtMe = '';
+  String myDp = '';
+
+  DocumentSnapshot myInfoRef;
+
+  final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
+  final Color active = Colors.white;
+  final Color divider = Colors.white;
 
   @override
   void initState() {
     getData();
-
+    myInfo();
     super.initState();
   }
 
@@ -31,6 +44,8 @@ class _Request_toSessionState extends State<Request_toSession> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfff0f0f0),
+      key: _key,
+      drawer: _buildDrawer(),
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery
@@ -64,16 +79,32 @@ class _Request_toSessionState extends State<Request_toSession> {
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(30),
                         bottomRight: Radius.circular(30))),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                  child: Center(
-                    child: Text('Request Aprroved to Session',
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white)
+
+                child: Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.menu,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          _key.currentState.openDrawer();
+                        },
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Center(
+                        child: Text('Aproved To Session',
+                            style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white)),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -100,7 +131,7 @@ class _Request_toSessionState extends State<Request_toSession> {
         color: Colors.white,
       ),
       width: double.infinity,
-      height: 150,
+      height: 130,
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Row(
@@ -132,20 +163,6 @@ class _Request_toSessionState extends State<Request_toSession> {
                 SizedBox(
                   height: 6,
                 ),
-                Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.merge_type,
-                      color: secondary,
-                      size: 20,
-                    ),
-
-
-                  ],
-                ),
-                SizedBox(
-                  height: 6,
-                ),
 
                 Row(
                   children: <Widget>[
@@ -157,41 +174,13 @@ class _Request_toSessionState extends State<Request_toSession> {
                     SizedBox(
                       width: 5,
                     ),
-                    Text(LawyerList[index]['description'],
-                        style: TextStyle(
-                            color: primary, fontSize: 13, letterSpacing: .3)),
+                    Flexible(
+                      child: Text(LawyerList[index]['description'],
+                          style: TextStyle(
+                              color: primary, fontSize: 13, letterSpacing: .3)),
+                    ),
                   ],
                 ),
-//                Row(
-//                  children: <Widget>[
-//                    Padding(
-//                        padding: EdgeInsets.only(top: 35),
-//                        child: Container(
-//                          decoration: BoxDecoration(
-//                              borderRadius: BorderRadius.all(
-//                                  Radius.circular(10)),
-//                              color: Constant.appColor),
-//                          child: FlatButton(
-//                            child: Text(
-//                              "Start Session",
-//                              style: TextStyle(
-//                                  color: Colors.white,
-//                                  fontWeight: FontWeight.w700,
-//                                  fontSize: 18),
-//                            ),
-//                            onPressed: () {
-//                              saveSession(LawyerList[index],index);
-//                              Navigator.push(context, MaterialPageRoute(builder:(context) => ChatScreen(
-//                                  name: LawyerList[index].data['username'],
-//                                  photoUrl: LawyerList[index].data['user_dp'],
-//                                  receiverUid:
-//                                  LawyerList[index].data['client_uid'])));
-//                            },
-//                          ),
-//                        )),
-//
-//                  ],
-//                ),
               ],
             ),
           )
@@ -199,7 +188,17 @@ class _Request_toSessionState extends State<Request_toSession> {
       ),
     );
   }
-
+  void myInfo() async {
+    myInfoRef = await Firestore.instance
+        .collection("Users")
+        .document((await FirebaseAuth.instance.currentUser()).uid)
+        .get();
+    setState(() {
+      myName = myInfoRef['username'];
+      abtMe = myInfoRef['about_yourself'];
+      myDp = myInfoRef['user_dp'];
+    });
+  }
 
   void getData() async {
     String uId = (await FirebaseAuth.instance.currentUser()).uid;
@@ -237,5 +236,118 @@ class _Request_toSessionState extends State<Request_toSession> {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  _buildDrawer() {
+    final String image = "images/1.jpg";
+    return ClipPath(
+      clipper: OvalRightBorderClipper(),
+      child: Container(
+        padding: const EdgeInsets.only(left: 16.0, right: 40),
+        decoration: BoxDecoration(
+            color: primary, boxShadow: [BoxShadow(color: Colors.black45)]),
+        width: 300,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 90,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient:
+                      LinearGradient(colors: [active, Colors.white30])),
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundImage: myDp == null
+                        ? AssetImage('/images/1.jpg')
+                        : NetworkImage(myDp),
+                  ),
+                ),
+                SizedBox(height: 5.0),
+                Text(
+                  myName,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600),
+                ),
+                abtMe == null
+                    ? Text('No Details')
+                    : Text(
+                  abtMe,
+                  style: TextStyle(color: active, fontSize: 16.0),
+                ),
+                SizedBox(height: 30.0),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChatList()));
+                  },
+                  child: _buildRow(
+                    Icons.message,
+                    "Chat",
+                  ),
+                ),
+                _buildDivider(),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Profile_Setting()));
+                    },
+                    child: _buildRow(
+                      Icons.face,
+                      "Edit profile",
+                    )),
+                _buildDivider(),
+                GestureDetector(
+                    onTap: () {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Client_Login()));
+                    },
+                    child: _buildRow(
+                      Icons.label_outline,
+                      "Logout",
+                    )),
+                _buildDivider(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Divider _buildDivider() {
+    return Divider(
+      color: divider,
+    );
+  }
+
+  Widget _buildRow(IconData icon, String title, {bool showBadge = false}) {
+    final TextStyle tStyle = TextStyle(color: active, fontSize: 16.0);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(children: [
+        Icon(
+          icon,
+          color: active,
+        ),
+        SizedBox(width: 10.0),
+        Text(
+          title,
+          style: tStyle,
+        ),
+        Spacer(),
+      ]),
+    );
   }
 }

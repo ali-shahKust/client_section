@@ -7,9 +7,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/client_login_page.dart';
 import 'package:client_lawyer_project/constant.dart';
+import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import 'accepted_request.dart';
 
 
 class Profile_Setting extends StatefulWidget {
@@ -18,6 +21,11 @@ class Profile_Setting extends StatefulWidget {
 }
 
 class _Profile_SettingState extends State<Profile_Setting> {
+  final primary = Constant.appColor;
+  final secondary = Constant.appColor;
+  String myName = '';
+  String abtMe = '';
+  String myDp = '';
   bool isloading = true;
   String dropdownValue = 'Major';
   String mDp = '';
@@ -44,6 +52,9 @@ class _Profile_SettingState extends State<Profile_Setting> {
     super.initState();
   }
 
+  final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
+  final Color active = Colors.white;
+  final Color divider = Colors.white;
   @override
   Widget build(BuildContext context) {
 
@@ -55,10 +66,13 @@ class _Profile_SettingState extends State<Profile_Setting> {
     }
     return Scaffold(
       backgroundColor: Colors.white,
+        key: _key,
+        drawer:_buildDrawer(),
       body:isloading ? Container() : SmartRefresher(
         enablePullDown: true,
         enablePullUp: true,
         header: WaterDropHeader(),
+
         footer: CustomFooter(
           builder: (BuildContext context,LoadStatus mode){
             Widget body ;
@@ -258,6 +272,10 @@ class _Profile_SettingState extends State<Profile_Setting> {
         .get();
     setState(() {
       isloading = false;
+
+      myName = mRef['username'];
+      abtMe = mRef['about_yourself'];
+      myDp = mRef['user_dp'];
       mName = mRef['username'];
       mType = mRef['about_yourself'];
       mPhoneNum = mRef['phonenumber'];
@@ -373,6 +391,120 @@ class _Profile_SettingState extends State<Profile_Setting> {
 
       });
     _refreshController.loadComplete();
+  }
+
+  //Side Navigation
+  _buildDrawer() {
+    final String image = "images/1.jpg";
+    return ClipPath(
+      clipper: OvalRightBorderClipper(),
+      child: Container(
+        padding: const EdgeInsets.only(left: 16.0, right: 40),
+        decoration: BoxDecoration(
+            color: primary, boxShadow: [BoxShadow(color: Colors.black45)]),
+        width: 300,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 90,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient:
+                      LinearGradient(colors: [active, Colors.white30])),
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundImage: myDp == null
+                        ? AssetImage('/images/1.jpg')
+                        : NetworkImage(myDp),
+                  ),
+                ),
+                SizedBox(height: 5.0),
+                Text(
+                  myName,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600),
+                ),
+                abtMe == null
+                    ? Text('No Details')
+                    : Text(
+                  abtMe,
+                  style: TextStyle(color: active, fontSize: 16.0),
+                ),
+                SizedBox(height: 30.0),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChatList()));
+                  },
+                  child: _buildRow(
+                    Icons.message,
+                    "Chat",
+                  ),
+                ),
+                _buildDivider(),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Profile_Setting()));
+                    },
+                    child: _buildRow(
+                      Icons.face,
+                      "Edit profile",
+                    )),
+                _buildDivider(),
+                GestureDetector(
+                    onTap: () {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Client_Login()));
+                    },
+                    child: _buildRow(
+                      Icons.label_outline,
+                      "Logout",
+                    )),
+                _buildDivider(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Divider _buildDivider() {
+    return Divider(
+      color: divider,
+    );
+  }
+
+  Widget _buildRow(IconData icon, String title, {bool showBadge = false}) {
+    final TextStyle tStyle = TextStyle(color: active, fontSize: 16.0);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(children: [
+        Icon(
+          icon,
+          color: active,
+        ),
+        SizedBox(width: 10.0),
+        Text(
+          title,
+          style: tStyle,
+        ),
+        Spacer(),
+      ]),
+    );
   }
 
 }
