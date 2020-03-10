@@ -4,6 +4,7 @@ import 'package:client_lawyer_project/search_lawyer_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Describe_Offer extends StatefulWidget {
   Map _map;
@@ -135,10 +136,6 @@ DocumentSnapshot mRef;
                         ),
                         onPressed: (){
                          sendOfferReq();
-                         final snackBar = SnackBar(content: Text('Offer Sent'));
-                         Scaffold.of(context).showSnackBar(snackBar);
-
-                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> ClientHomePage()));
                         },
                       ),
                     )),
@@ -167,19 +164,41 @@ DocumentSnapshot mRef;
   }
 
   void sendOfferReq() async{
-    DocumentReference ref = await databaseReference.collection("My Request")
-        .add({
-      'lawyer_uid': _map['user_uid'],
-      'client_uid': (await FirebaseAuth.instance.currentUser()).uid,
-      'username': mRef['username'],
-      'user_dp': mRef['user_dp'],
-      'consultant' : _conscontroller.text,
-      'description': _descontroller.text,
-      'lawyer_name': _map['username'],
-      'lawyer_dp':_map['user_dp']
+    try{
+      DocumentReference ref = await databaseReference.collection("My Request")
+          .add({
+        'lawyer_uid': _map['user_uid'],
+        'client_uid': (await FirebaseAuth.instance.currentUser()).uid,
+        'username': mRef['username'],
+        'user_dp': mRef['user_dp'],
+        'consultant' : _conscontroller.text,
+        'description': _descontroller.text,
+        'lawyer_name': _map['username'],
+        'lawyer_dp':_map['user_dp']
 
-    });
+      });
 
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> ClientHomePage()));
+      Fluttertoast.showToast(
+          msg: "Request Send To Lawyer",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.grey.shade300,
+          textColor: Colors.black,
+          fontSize: 16.0
+      );
+    }catch(e){
+      Fluttertoast.showToast(
+          msg: e.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.grey.shade300,
+          textColor: Colors.black,
+          fontSize: 16.0
+      );
+    }
 
   }
 void getInfo() async {

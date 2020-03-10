@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:client_lawyer_project/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/client_login_page.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -312,11 +314,31 @@ class _Profile_SettingState extends State<Profile_Setting> {
         'phonenumber': _phonecontroller.text,
         'about_yourself': _descriptioncontroller.text,
       }, merge: true);
+      Fluttertoast.showToast(
+          msg: "Profile Updated Successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.grey.shade300,
+          textColor: Colors.black,
+          fontSize: 16.0
+      );
       pr.hide().then((isHidden) {
         print(isHidden);
       });
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ClientHomePage()));
     } catch (e) {
       print(e.message);
+      Fluttertoast.showToast(
+          msg: e.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.grey.shade300,
+          textColor: Colors.black,
+          fontSize: 16.0
+      );
     }
   }
   FirebaseStorage _storage = FirebaseStorage.instance;
@@ -364,6 +386,15 @@ class _Profile_SettingState extends State<Profile_Setting> {
       });
       url = await result.ref.getDownloadURL();
 
+      Fluttertoast.showToast(
+          msg: 'Picture Uploaded Successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.grey.shade300,
+          textColor: Colors.black,
+          fontSize: 16.0
+      );
       await databaseReference.collection("Users").document(mUid).updateData({
 
         'user_dp': url,
