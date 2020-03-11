@@ -36,13 +36,14 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
 
   @override
   void initState() {
-    getData();
+    getData('Type Of Consultant');
     myInfo();
     super.initState();
   }
 
   final List<Map> LawyerList = [];
   List<Map> _filteredList = List();
+  List<Map> _dropDownList = List();
 
   _filterItems(String val) {
     _filteredList.clear();
@@ -53,6 +54,15 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
       }
     }
     setState(() {});
+  }
+  _dopDownItemList(String val){
+    _dropDownList.clear();
+    for(var j in LawyerList){
+     var major = j['type'].toString().toLowerCase();
+     if(major == val || major.contains(val)){
+       _dropDownList.add(j);
+     }
+    }
   }
 
   @override
@@ -147,11 +157,12 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                     ],
                   ),
                 ),
+
                 Container(
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                        height: 110,
+                        height: 100,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
@@ -178,9 +189,28 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                                 contentPadding: EdgeInsets.symmetric(
                                     horizontal: 25, vertical: 13)),
                           ),
+
                         ),
                       ),
+
+
                     ],
+                  ),
+                ),
+                Container(
+                  child:     Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20,vertical: 120),
+                    child: Container(
+                      height: 80,
+                      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                              child: buildDropdownButton(['Type Of Consultant','murder','company','government'],'Type Of Consultant')
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 )
               ],
@@ -188,6 +218,23 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildDropdownButton(List<String> items, String selectedValue) {
+    return DropdownButton<String>(
+      isExpanded: true,
+      value: selectedValue,
+      onChanged: (value) {
+        LawyerList.clear();
+        getData(value);
+      },
+      items: items.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
     );
   }
 
@@ -204,6 +251,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          SizedBox(height: 25,),
           Container(
             width: 50,
             height: 50,
@@ -336,14 +384,26 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
     );
   }
 
-  void getData() {
-    databaseReference
-        .collection("Lawyers")
-        .getDocuments()
-        .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) => LawyerList.add(f.data));
-      setState(() {});
-    });
+  void getData(String type) {
+    if(type == 'Type Of Consultant'){
+      databaseReference
+          .collection("Lawyers")
+          .getDocuments()
+          .then((QuerySnapshot snapshot) {
+        snapshot.documents.forEach((f) => LawyerList.add(f.data));
+        setState(() {});
+      });
+    }else
+      {
+        databaseReference
+            .collection("Lawyers").where('type' , isEqualTo: type)
+            .getDocuments()
+            .then((QuerySnapshot snapshot) {
+          snapshot.documents.forEach((f) => LawyerList.add(f.data));
+          setState(() {});
+        });
+      }
+
   }
 
   void myInfo() async {
