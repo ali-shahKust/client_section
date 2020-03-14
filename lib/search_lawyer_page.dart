@@ -296,11 +296,13 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                     ),
                     SizedBox(
                       width: 5,
-                    ),
+                    )
+                    ,
+                    LawyerList[index]['type'] == null? Text('No Details'):
                     Text(
                         _filteredList.isEmpty
                             ? LawyerList[index]['type']
-                            : _filteredList[index]['type'],
+                            : _filteredList[index]['type']== null? 'No Details ' :_filteredList[index]['type'],
                         style: TextStyle(
                             color: primary, fontSize: 13, letterSpacing: .3)),
                   ],
@@ -318,10 +320,11 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                     SizedBox(
                       width: 5,
                     ),
+                    LawyerList[index]['fees'] == null ? Text('No Details'):
                     Text(
                         _filteredList.isEmpty
                             ? LawyerList[index]['fees']
-                            : _filteredList[index]['fees'],
+                            : _filteredList[index]['fees'] == null ? 'No Details': _filteredList[index]['fees'],
                         style: TextStyle(
                             color: primary, fontSize: 13, letterSpacing: .3)),
                   ],
@@ -340,10 +343,10 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                       width: 5,
                     ),
                     Flexible(
-                      child: Text(
+                      child:  LawyerList[index]['description'] == null ? Text("No Details"): Text(
                           _filteredList.isEmpty
                               ? LawyerList[index]['description']
-                              : _filteredList[index]['description'],
+                              : _filteredList[index]['description'] == null?'No Details':_filteredList[index]['description'],
                           style: TextStyle(
                               color: primary, fontSize: 13, letterSpacing: .3)),
                     ),
