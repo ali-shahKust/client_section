@@ -14,10 +14,9 @@ class Client_Signup extends StatefulWidget {
 
 class _Client_SignupState extends State<Client_Signup> {
 
-
+//Variables
   String _email, _password, _name;
   final databaseReference = Firestore.instance;
-
   final _emailcontroller = TextEditingController();
   final _passwordcontroller = TextEditingController();
   final _namecontroller = TextEditingController();
@@ -28,6 +27,8 @@ class _Client_SignupState extends State<Client_Signup> {
     pr = new ProgressDialog(context);
     return Scaffold(
       backgroundColor: Colors.white,
+
+      //Body Of Screen
       body: ListView(
         children: <Widget>[
           Stack(
@@ -168,23 +169,13 @@ class _Client_SignupState extends State<Client_Signup> {
                   ),
                   onPressed: () {
                     setState(() {
+
+                      //Sign up Function Will be Called
                       signUp();
                     });
                   },
                 ),
               )),
-//          SizedBox(
-//            height: 20,
-//          ),
-//          Center(
-//            child: Text(
-//              "FORGET PASSWORD ?",
-//              style: TextStyle(
-//                  color: Constant.appColor,
-//                  fontSize: 12,
-//                  fontWeight: FontWeight.w700),
-//            ),
-//          ),
           SizedBox(
             height: 40,
           ),
@@ -220,12 +211,12 @@ class _Client_SignupState extends State<Client_Signup> {
       ),
     );
   }
-
+//Sign up function will check If user Email is valid or not
   void signUp() async {
     _email = _emailcontroller.text;
     _password = _passwordcontroller.text;
     _name = _namecontroller.text;
-
+//Progress bar will Shown
     try {
       pr.style(
           message: 'Please Wait...',
@@ -242,11 +233,13 @@ class _Client_SignupState extends State<Client_Signup> {
               color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
       );
       await pr.show();
+
+      //Create User If All details Are Correct
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: _email, password: _password);
 
       String mUid = (await FirebaseAuth.instance.currentUser()).uid;
-
+//Upload User Details To Firestore cloud
       await databaseReference.collection("Users")
           .document(mUid).setData({
         'user_uid':  (await FirebaseAuth.instance.currentUser()).uid,

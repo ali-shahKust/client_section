@@ -1,6 +1,4 @@
 import 'dart:collection';
-
-import 'package:client_lawyer_project/search_lawyer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:client_lawyer_project/client_signup_page.dart';
@@ -15,17 +13,19 @@ class Client_Login extends StatefulWidget {
 
 class _Client_LoginState extends State<Client_Login> {
   //Variables For Email and password and formkey
-
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
  String _email, _password;
   final _emailcontroller = TextEditingController();
   final _passwordcontroller = TextEditingController();
+
+  //Progress bar Initialization
   ProgressDialog pr;
 
 
   @override
   Widget build(BuildContext context) {
+
+    //assigning Progress bar
     pr = new ProgressDialog(context);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -144,18 +144,7 @@ class _Client_LoginState extends State<Client_Login> {
                   onPressed: signIn,
                 ),
               )),
-//          SizedBox(
-//            height: 20,
-//          ),
-//          Center(
-//            child: Text(
-//              "FORGET PASSWORD ?",
-//              style: TextStyle(
-//                  color: Constant.appColor,
-//                  fontSize: 12,
-//                  fontWeight: FontWeight.w700),
-//            ),
-//          ),
+
           SizedBox(
             height: 40,
           ),
@@ -191,14 +180,13 @@ class _Client_LoginState extends State<Client_Login> {
       ),
     );
   }
-
+//Sign in will be called to validate if User Exist
   Future<void> signIn() async {
 
     _email = _emailcontroller.text;
     _password = _passwordcontroller.text;
 
-    HashMap mMap = new HashMap<String, String>();
-
+//On Sign In Button Press Progress bar will apear
       try{
         pr.style(
             message: 'Please Wait...',
@@ -215,6 +203,8 @@ class _Client_LoginState extends State<Client_Login> {
                 color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
         );
         await pr.show();
+
+        //Validate User and password
          await FirebaseAuth.instance.signInWithEmailAndPassword(email:_email , password: _password);
         pr.hide().then((isHidden) {
           print(isHidden);

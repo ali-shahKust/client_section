@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-
+//This Class is created To Assign Color to App
 class  Constant {
 
  // static Color appColor=Colors.blue;

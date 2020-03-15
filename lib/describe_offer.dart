@@ -6,12 +6,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+
+//In this class User Will Describe Offer to the lawyer
 class Describe_Offer extends StatefulWidget {
+
+  //Retreive Data Of Lawyer From Previous Class
   Map _map;
+  //Constructor
   Describe_Offer(Map map){
     this._map = map;
     print('my data is $_map');
-
     _map['user_id'];
   }
 
@@ -21,28 +25,29 @@ class Describe_Offer extends StatefulWidget {
 
 class _Describe_OfferState extends State<Describe_Offer> {
 
+  //Constructor for state
 Map _map;
-
 _Describe_OfferState(this._map);
 
+//Variables
 String lawyer_id= '';
 String myname = '';
 String lawyer_name ='';
 DocumentSnapshot mRef;
+
+//Init function will be called on Start to get Details of users
 @override
   void initState() {
     // TODO: implement initState
     getInfo();
     super.initState();
   }
-
- // String lawyer_id = _map['user_id'];
+  //Refrence for Firebase
   final databaseReference = Firestore.instance;
 
+//Edit Text Controller
   final _descontroller = TextEditingController();
-
   final _conscontroller = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +115,7 @@ DocumentSnapshot mRef;
                 Container(
                   padding: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
                   child: TextField(
+                    maxLength: 100,
                     controller: _descontroller,
                     decoration: InputDecoration(
                       hintText: 'Please Provide Your Decription'
@@ -143,26 +149,11 @@ DocumentSnapshot mRef;
             ),
           ),
         ],
-
       ),
-
     );
   }
 
-  Widget buildDropdownButton(List<String> items, String selectedValue) {
-    return DropdownButton<String>(
-      isExpanded: true,
-      value: selectedValue,
-      onChanged: (_) {},
-      items: items.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-
+  //Function will be called On Request Send
   void sendOfferReq() async{
     try{
       DocumentReference ref = await databaseReference.collection("My Request")
@@ -201,13 +192,13 @@ DocumentSnapshot mRef;
     }
 
   }
+  //Getting Users Details
 void getInfo() async {
    mRef = await Firestore.instance
       .collection("Users")
       .document((await FirebaseAuth.instance.currentUser()).uid)
       .get();
    setState(() {
-     print('xnxx ${mRef.data.toString()}');
    });
 }
 
