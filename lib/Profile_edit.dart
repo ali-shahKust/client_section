@@ -23,6 +23,8 @@ class Profile_Setting extends StatefulWidget {
 }
 
 class _Profile_SettingState extends State<Profile_Setting> {
+
+  //Variables
   final primary = Constant.appColor;
   final secondary = Constant.appColor;
   String myName = '';
@@ -34,8 +36,6 @@ class _Profile_SettingState extends State<Profile_Setting> {
   String mName = '';
   String mType = '';
   String mPhoneNum = '';
-  String mLicenceNumber = '';
-  String mYearExperience = '';
   String mDescription = '';
   DocumentSnapshot mRef;
   File _image;
@@ -60,7 +60,10 @@ class _Profile_SettingState extends State<Profile_Setting> {
   @override
   Widget build(BuildContext context) {
 
+
     pr = new ProgressDialog(context);
+
+    //Check if Values already exist in database Then Assign It
     if(mRef != null){
       _namecontroller.text = mRef['username'];
       _phonecontroller.text = mRef['phonenumber'];
@@ -74,7 +77,7 @@ class _Profile_SettingState extends State<Profile_Setting> {
         enablePullDown: true,
         enablePullUp: true,
         header: WaterDropHeader(),
-
+      //Refresh The page
         footer: CustomFooter(
           builder: (BuildContext context,LoadStatus mode){
             Widget body ;
@@ -266,7 +269,7 @@ class _Profile_SettingState extends State<Profile_Setting> {
       ),
     );
   }
-
+//Geting users Data
   void getData() async {
      mRef = await Firestore.instance
         .collection("Users")
@@ -274,7 +277,6 @@ class _Profile_SettingState extends State<Profile_Setting> {
         .get();
     setState(() {
       isloading = false;
-
       myName = mRef['username'];
       abtMe = mRef['about_yourself'];
       myDp = mRef['user_dp'];
@@ -288,7 +290,7 @@ class _Profile_SettingState extends State<Profile_Setting> {
 
     });
   }
-
+//Create And Update details Of user in database
   void createRecord() async {
     try {
 
@@ -342,7 +344,7 @@ class _Profile_SettingState extends State<Profile_Setting> {
     }
   }
   FirebaseStorage _storage = FirebaseStorage.instance;
-
+//Upload User pROFIle picture to database
   Future<Uri> uploadPic() async {
     pr.style(
         message: 'Uploading Image...',

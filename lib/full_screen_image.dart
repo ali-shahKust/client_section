@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
+//This Class will be called To View Image in Full Size
 class FullScreenImage extends StatefulWidget {
-
   String photoUrl;
   FullScreenImage({this.photoUrl});
-
   _FullScreenImageState createState() => _FullScreenImageState();
 }
 

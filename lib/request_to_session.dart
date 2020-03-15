@@ -3,20 +3,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-
 import 'Profile_edit.dart';
 import 'accepted_request.dart';
-import 'client_chat_page.dart';
 import 'client_login_page.dart';
 
+//In this class User Will know that the offer is Accepted And Aproved To session
 class Request_toSession extends StatefulWidget {
   Request_toSession({Key key}) : super(key: key);
-  static final String path = "lib/src/pages/lists/list2.dart";
-
   _Request_toSessionState createState() => _Request_toSessionState();
 }
 
 class _Request_toSessionState extends State<Request_toSession> {
+
+  //Variables
   final primary = Constant.appColor;
   final secondary = Constant.appColor;
   final databaseReference = Firestore.instance;
@@ -25,7 +24,6 @@ class _Request_toSessionState extends State<Request_toSession> {
   String myName = '';
   String abtMe = '';
   String myDp = '';
-
   DocumentSnapshot myInfoRef;
 
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
@@ -123,7 +121,7 @@ class _Request_toSessionState extends State<Request_toSession> {
       ),
     );
   }
-
+//List Of Session
   Widget buildList(BuildContext context, int index) {
     return Container(
       decoration: BoxDecoration(
@@ -145,7 +143,7 @@ class _Request_toSessionState extends State<Request_toSession> {
               borderRadius: BorderRadius.circular(50),
               border: Border.all(width: 3, color: secondary),
               image: DecorationImage(
-                  image:LawyerList[index]['lawyer_dp'] == null? AssetImage('/images/3.jpg') : NetworkImage(LawyerList[index]['lawyer_dp']),
+                  image:LawyerList[index]['lawyer_dp'] == null? AssetImage('images/3.jpg') : NetworkImage(LawyerList[index]['lawyer_dp']),
                   fit: BoxFit.fill),
             ),
           ),
@@ -188,6 +186,8 @@ class _Request_toSessionState extends State<Request_toSession> {
       ),
     );
   }
+
+  //Retreive User Details
   void myInfo() async {
     myInfoRef = await Firestore.instance
         .collection("Users")
@@ -199,6 +199,8 @@ class _Request_toSessionState extends State<Request_toSession> {
       myDp = myInfoRef['user_dp'];
     });
   }
+
+  //Retreive Request Details
 
   void getData() async {
     String uId = (await FirebaseAuth.instance.currentUser()).uid;
@@ -212,34 +214,8 @@ class _Request_toSessionState extends State<Request_toSession> {
     });
   }
 
-  void saveSession(DocumentSnapshot sessionShot ,int index) {
-    Firestore.instance
-        .collection('start_chat')
-        .add(sessionShot.data)
-        .then((sVal){
-      deleteData(sessionShot.documentID, index);
-    });
-  }
-
-
-  void deleteData(String documentId, int index) {
-    try {
-      databaseReference
-          .collection('My Session')
-          .document(documentId)
-          .delete().then(
-              (val) {
-            setState(() {
-              LawyerList.removeAt(index);
-            });
-          });
-    } catch (e) {
-      print(e.toString());
-    }
-  }
 
   _buildDrawer() {
-    final String image = "images/1.jpg";
     return ClipPath(
       clipper: OvalRightBorderClipper(),
       child: Container(
@@ -261,7 +237,7 @@ class _Request_toSessionState extends State<Request_toSession> {
                   child: CircleAvatar(
                     radius: 40,
                     backgroundImage: myDp == null
-                        ? AssetImage('/images/1.jpg')
+                        ? AssetImage('images/1.jpg')
                         : NetworkImage(myDp),
                   ),
                 ),

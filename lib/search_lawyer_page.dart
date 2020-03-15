@@ -19,32 +19,33 @@ class Search_Lawyer_Page extends StatefulWidget {
 }
 
 class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
+
+  //Variables
   final primary = Constant.appColor;
   final secondary = Constant.appColor;
   final databaseReference = Firestore.instance;
-
   DocumentSnapshot myInfoRef;
   String myName = '';
   String abtMe = '';
   String myDp = '';
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   final Color active = Colors.white;
   final Color divider = Colors.white;
 
+  //Init will be called on start to get data and info
   @override
   void initState() {
     getData('Type Of Consultant');
     myInfo();
     super.initState();
   }
-
+//List And Filter List
   final List<Map> LawyerList = [];
   List<Map> _filteredList = List();
-  List<Map> _dropDownList = List();
 
+  //Assigning values to filter list
   _filterItems(String val) {
     _filteredList.clear();
     for (var i in LawyerList) {
@@ -54,15 +55,6 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
       }
     }
     setState(() {});
-  }
-  _dopDownItemList(String val){
-    _dropDownList.clear();
-    for(var j in LawyerList){
-     var major = j['type'].toString().toLowerCase();
-     if(major == val || major.contains(val)){
-       _dropDownList.add(j);
-     }
-    }
   }
 
   @override
@@ -220,7 +212,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
       ),
     );
   }
-
+//Drop Down Menu to get Specific Field Of Items
   Widget buildDropdownButton(List<String> items, String selectedValue) {
     return DropdownButton<String>(
       isExpanded: true,
@@ -237,7 +229,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
       }).toList(),
     );
   }
-
+//Build A list Of Lawyers
   Widget buildList(BuildContext context, int index) {
     return Container(
       decoration: BoxDecoration(
@@ -387,6 +379,8 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
     );
   }
 
+
+  //get Data for List
   void getData(String type) {
     if(type == 'Type Of Consultant'){
       databaseReference
@@ -408,7 +402,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
       }
 
   }
-
+//Get My Details
   void myInfo() async {
     myInfoRef = await Firestore.instance
         .collection("Users")
@@ -435,7 +429,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
     if (mounted) setState(() {});
     _refreshController.loadComplete();
   }
-
+//Side Navigation
   _buildDrawer() {
     final String image = "images/1.jpg";
     return ClipPath(

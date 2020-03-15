@@ -3,19 +3,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-
 import 'Profile_edit.dart';
 import 'accepted_request.dart';
 import 'client_login_page.dart';
 
+//IN this class we check the status of Our Request Send to Lawyer
 class Request_Page extends StatefulWidget {
   Request_Page({Key key}) : super(key: key);
-  static final String path = "lib/src/pages/lists/list2.dart";
 
   _Request_PageState createState() => _Request_PageState();
 }
 
 class _Request_PageState extends State<Request_Page> {
+
+  //Variable
   final primary = Constant.appColor;
   final secondary = Constant.appColor;
   final databaseReference = Firestore.instance;
@@ -24,12 +25,12 @@ class _Request_PageState extends State<Request_Page> {
   String myName = '';
   String abtMe = '';
   String myDp = '';
-
   DocumentSnapshot myInfoRef;
-
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   final Color active = Colors.white;
   final Color divider = Colors.white;
+
+  //Init Function will be called on start
   @override
   void initState() {
     getData();
@@ -120,7 +121,7 @@ class _Request_PageState extends State<Request_Page> {
       ),
     );
   }
-
+//Build List of Request Send to lawyer
   Widget buildList(BuildContext context, int index) {
     return Container(
       decoration: BoxDecoration(
@@ -190,6 +191,7 @@ class _Request_PageState extends State<Request_Page> {
       ),
     );
   }
+  //Retreive User Details
   void myInfo() async {
     myInfoRef = await Firestore.instance
         .collection("Users")
@@ -202,6 +204,7 @@ class _Request_PageState extends State<Request_Page> {
     });
   }
 
+  //Retreive Request Details
   void getData() async {
     String uId = (await FirebaseAuth.instance.currentUser()).uid;
     databaseReference
@@ -214,33 +217,7 @@ class _Request_PageState extends State<Request_Page> {
     });
   }
 
-  void saveSession(DocumentSnapshot sessionShot ,int index) {
-    Firestore.instance
-        .collection('My Session')
-        .add(sessionShot.data)
-        .then((sVal){
-          deleteData(sessionShot.documentID, index);
-    });
-  }
-
-
-  void deleteData(String documentId, int index) {
-    try {
-      databaseReference
-          .collection('My Request')
-          .document(documentId)
-          .delete().then(
-              (val) {
-            setState(() {
-              LawyerList.removeAt(index);
-            });
-          });
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-
+  //Side Navigation
   _buildDrawer() {
     final String image = "images/1.jpg";
     return ClipPath(

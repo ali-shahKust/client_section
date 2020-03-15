@@ -18,10 +18,11 @@ class ClientHomePage extends StatefulWidget {
 }
 
 class _ClientHomePageState extends State<ClientHomePage> {
+
+  //Variables
   String mName = '';
   Message _message;
   String receiverUid;
-
   final primary = Constant.appColor;
   final secondary = Constant.appColor;
   String myName = '';
@@ -37,7 +38,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   final Color active = Colors.white;
   final Color divider = Colors.white;
-
+//Home Screen Card
   Widget cards(image, title) {
     return GestureDetector(
       onTap: () {
@@ -50,9 +51,6 @@ class _ClientHomePageState extends State<ClientHomePage> {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => Request_Page()));
             break;
-//          case "Profile":
-//            Navigator.push(context, MaterialPageRoute(builder: (context) => Profile_Setting()));
-//            break;
           case "Chat":
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => ChatList()));
@@ -203,7 +201,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
           ),
         ));
   }
-
+//Getting User details
   void getData() async {
     DocumentSnapshot mRef = await Firestore.instance
         .collection("Users")
@@ -216,7 +214,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
       myDp = mRef['user_dp'];
     });
   }
-
+//Building Side Navigation Drawer
   _buildDrawer() {
     final String image = "images/1.jpg";
     return ClipPath(
@@ -302,13 +300,11 @@ class _ClientHomePageState extends State<ClientHomePage> {
       ),
     );
   }
-
   Divider _buildDivider() {
     return Divider(
       color: divider,
     );
   }
-
   Widget _buildRow(IconData icon, String title, {bool showBadge = false}) {
     final TextStyle tStyle = TextStyle(color: active, fontSize: 16.0);
     return Container(
