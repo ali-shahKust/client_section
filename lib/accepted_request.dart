@@ -23,6 +23,8 @@ class _ChatListState extends State<ChatList> {
   final List<DocumentSnapshot> LawyerList = [
   ];
 
+
+  //On start this init will be called To get Details of users
   @override
   void initState() {
     // TODO: implement initState
@@ -88,6 +90,8 @@ class _ChatListState extends State<ChatList> {
 
   Widget buildList(BuildContext context, int index) {
     return Container(
+
+      //Card Design And setting up values in it
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         color: Colors.white,
@@ -97,6 +101,8 @@ class _ChatListState extends State<ChatList> {
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Row(
+
+        //In this Row we will get Lawyer Profile picture , Name , Description
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
@@ -107,7 +113,7 @@ class _ChatListState extends State<ChatList> {
               borderRadius: BorderRadius.circular(50),
               border: Border.all(width: 3, color: secondary),
               image: DecorationImage(
-                  image:LawyerList[index]['lawyer_dp']== null? AssetImage('/images/3.jpg'): NetworkImage(LawyerList[index]['lawyer_dp']),
+                  image:LawyerList[index]['lawyer_dp']== null? AssetImage('images/3.jpg'): NetworkImage(LawyerList[index]['lawyer_dp']),
                   fit: BoxFit.fill),
             ),
           ),
@@ -160,6 +166,8 @@ class _ChatListState extends State<ChatList> {
                   ],
                 ),
                 Padding(
+
+                  //On Start Button Chat will be Start
                     padding: EdgeInsets.only(top: 35),
                     child: Container(
                       decoration: BoxDecoration(
@@ -174,9 +182,12 @@ class _ChatListState extends State<ChatList> {
                               fontSize: 18),
                         ),
                         onPressed: () {
+                          //On button press It will Send to chat Screen
                           Navigator.push(context, MaterialPageRoute(builder: (
                               context) =>
                               ChatScreen(
+
+                                //Parsing Lawyers Detail To chat Screen
                                   name: LawyerList[index].data['username'],
                                   photoUrl: LawyerList[index].data['user_dp'],
                                   receiverUid:

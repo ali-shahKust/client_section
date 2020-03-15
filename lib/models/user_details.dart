@@ -1,13 +1,15 @@
 
 class UserDetails {
-
+//Users Required Variable
   String username;
   String user_email;
   String user_dp;
   String user_uid;
 
+  //Constructor
   UserDetails({this.username, this.user_email, this.user_dp, this.user_uid});
 
+  //To get Display name and profile
   Map toMap(UserDetails userDetails) {
     var data = Map<String, String>();
     data['username'] = userDetails.username;
@@ -16,19 +18,20 @@ class UserDetails {
     data['user_uid'] = userDetails.user_uid;
     return data;
   }
-
+//Top get Display name and Profile
   UserDetails.fromMap(Map<String, String> mapData) {
     this.username = mapData['username'];
     this.user_email = mapData['user_email'];
     this.user_dp = mapData['user_dp'];
     this.user_uid = mapData['user_uid'];
   }
-
+//Getters
   String get _name => username;
   String get _emailId => user_email;
   String get _photoUrl => user_dp;
   String get _uid => user_uid;
 
+  //Setters
   set _photoUrl(String user_dp) {
     this.user_dp = user_dp;
   }

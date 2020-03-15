@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Message {
 
+  //Variables to set a map in Firestore cloud
   String senderUid;
   String receiverUid;
   String type;
@@ -11,9 +12,13 @@ class Message {
   FieldValue timestamp;
   String photoUrl;
 
+  //Constructor For Text Messages
   Message({this.senderUid, this.receiverUid, this.type, this.message, this.timestamp});
+
+  //Constructor for Other Type OF messages such as picture
   Message.withoutMessage({this.receiverUid, this.senderUid, this.type, this.timestamp, this.photoUrl});
 
+  //Setting Up map to receiver
   Map toMap() {
     var map = Map<String, dynamic>();
     map['senderUid'] = this.senderUid;
@@ -24,6 +29,7 @@ class Message {
     return map;
   }
 
+  //Setting up map for sender
   Message fromMap(Map<String, dynamic> map) {
     Message _message = Message();
     _message.senderUid = map['senderUid'];
