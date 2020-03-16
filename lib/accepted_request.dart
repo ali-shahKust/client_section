@@ -210,8 +210,8 @@ class _ChatListState extends State<ChatList> {
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
-        LawyerList.add(f);
         setState(() {
+          LawyerList.add(f);
         });
       }
       );
