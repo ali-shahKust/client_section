@@ -22,7 +22,7 @@ class _ChatListState extends State<ChatList> {
   final List<DocumentSnapshot> LawyerNames = [];
   final List<DocumentSnapshot> LawyerList = [
   ];
-
+  bool isChecked ;
 
   //On start this init will be called To get Details of users
   @override
@@ -89,8 +89,8 @@ class _ChatListState extends State<ChatList> {
   }
 
   Widget buildList(BuildContext context, int index) {
+    isChecked = LawyerList[index]['chat_status'];
     return Container(
-
       //Card Design And setting up values in it
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
@@ -173,7 +173,7 @@ class _ChatListState extends State<ChatList> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           color: Constant.appColor),
-                      child: FlatButton(
+                      child:isChecked ==false? FlatButton(child: Text('Chat disabled'),): FlatButton(
                         child: Text(
                           "Start Chat",
                           style: TextStyle(
@@ -186,7 +186,6 @@ class _ChatListState extends State<ChatList> {
                           Navigator.push(context, MaterialPageRoute(builder: (
                               context) =>
                               ChatScreen(
-
                                 //Parsing Lawyers Detail To chat Screen
                                   name: LawyerList[index].data['username'],
                                   photoUrl: LawyerList[index].data['user_dp'],
@@ -210,10 +209,13 @@ class _ChatListState extends State<ChatList> {
         .collection("start_chat").where('client_uid', isEqualTo: uId)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) => LawyerList.add(f));
-      setState(() {
+      snapshot.documents.forEach((f) {
+        LawyerList.add(f);
+        setState(() {
+        });
+      }
+      );
 
-      });
     });
   }
 
