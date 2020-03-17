@@ -30,6 +30,7 @@ Map _map;
 _Describe_OfferState(this._map);
 
 //Variables
+  bool isChecked = true;
 String lawyer_id= '';
 String myname = '';
 String lawyer_name ='';
@@ -165,7 +166,8 @@ DocumentSnapshot mRef;
         'consultant' : _conscontroller.text,
         'description': _descontroller.text,
         'lawyer_name': _map['username'],
-        'lawyer_dp':_map['user_dp']
+        'lawyer_dp':_map['user_dp'],
+        'chat_status': isChecked
 
       });
 
