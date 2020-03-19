@@ -28,6 +28,7 @@ class _Describe_OfferState extends State<Describe_Offer> {
   //Constructor for state
 Map _map;
 _Describe_OfferState(this._map);
+bool _validate = false;
 
 //Variables
   bool isChecked = true;
@@ -102,7 +103,8 @@ DocumentSnapshot mRef;
                           child: TextField(
                             controller : _conscontroller,
                             decoration: InputDecoration(
-                              hintText: 'Consultant'
+                              hintText: 'Consultant',
+                              errorText: _validate ? 'Value Can\'t Be Empty' : null,
                           ),)
                       ),
                     ],
@@ -116,10 +118,13 @@ DocumentSnapshot mRef;
                 Container(
                   padding: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
                   child: TextField(
+
                     maxLength: 100,
                     controller: _descontroller,
                     decoration: InputDecoration(
-                      hintText: 'Please Provide Your Decription'
+                      hintText: 'Please Provide Your Decription',
+                      errorText: _validate ? 'Value Can\'t Be Empty' : null,
+
                   ),
                     textAlign: TextAlign.justify,
                     style: TextStyle(
