@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/constant.dart';
 import 'package:client_lawyer_project/client_signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 import 'homepage.dart';
@@ -21,6 +22,7 @@ class _Client_LoginState extends State<Client_Login> {
   //Progress bar Initialization
   ProgressDialog pr;
 
+  bool _validate = false;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +82,7 @@ class _Client_LoginState extends State<Client_Login> {
                 controller: _emailcontroller,
                 cursorColor: Constant.appColor,
                 decoration: InputDecoration(
+                    errorText: _validate ? 'Value Can\'t Be Empty' : null,
                     hintText: "Email",
                     prefixIcon: Material(
                       elevation: 0,
@@ -109,6 +112,7 @@ class _Client_LoginState extends State<Client_Login> {
                 onChanged: (String value) {},
                 cursorColor: Constant.appColor,
                 decoration: InputDecoration(
+                    errorText: _validate ? 'Value Can\'t Be Empty' : null,
                     hintText: "Password",
                     prefixIcon: Material(
                       elevation: 0,
@@ -141,7 +145,21 @@ class _Client_LoginState extends State<Client_Login> {
                         fontWeight: FontWeight.w700,
                         fontSize: 18),
                   ),
-                  onPressed: signIn,
+                  onPressed: (){
+                    setState(() {
+                      _emailcontroller.text.isEmpty ? _validate = true : _validate = false;
+                      _passwordcontroller.text.isEmpty ? _validate = true : _validate = false;
+                    });
+                    _validate == false? signIn() : Fluttertoast.showToast(
+                        msg: "Please Check Fields",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIos: 1,
+                        backgroundColor: Colors.grey.shade300,
+                        textColor: Colors.black,
+                        fontSize: 16.0
+                    );
+                  },
                 ),
               )),
 
@@ -211,6 +229,15 @@ class _Client_LoginState extends State<Client_Login> {
         });
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ClientHomePage()));
       }catch(e){
+        Fluttertoast.showToast(
+            msg: e.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.grey.shade300,
+            textColor: Colors.black,
+            fontSize: 16.0
+        );
         pr.hide().then((isHidden) {
           print(isHidden);
         });

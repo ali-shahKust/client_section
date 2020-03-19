@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:client_lawyer_project/client_login_page.dart';
 import 'package:client_lawyer_project/constant.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 import 'Profile_edit.dart';
@@ -15,6 +16,8 @@ class Client_Signup extends StatefulWidget {
 class _Client_SignupState extends State<Client_Signup> {
 
 //Variables
+  bool _validate = false;
+
   String _email, _password, _name;
   final databaseReference = Firestore.instance;
   final _emailcontroller = TextEditingController();
@@ -77,6 +80,8 @@ class _Client_SignupState extends State<Client_Signup> {
                 onChanged: (String value) {},
                 cursorColor: Constant.appColor,
                 decoration: InputDecoration(
+                    errorText: _validate ? 'Value Can\'t Be Empty' : null,
+
                     hintText: "Username",
                     prefixIcon: Material(
                       elevation: 0,
@@ -106,6 +111,8 @@ class _Client_SignupState extends State<Client_Signup> {
                 onChanged: (String value) {},
                 cursorColor: Constant.appColor,
                 decoration: InputDecoration(
+                    errorText: _validate ? 'Value Can\'t Be Empty' : null,
+
                     hintText: "Email",
                     prefixIcon: Material(
                       elevation: 0,
@@ -135,6 +142,8 @@ class _Client_SignupState extends State<Client_Signup> {
                 onChanged: (String value) {},
                 cursorColor: Constant.appColor,
                 decoration: InputDecoration(
+                    errorText: _validate ? 'Value Can\'t Be Empty' : null,
+
                     hintText: "Password",
                     prefixIcon: Material(
                       elevation: 0,
@@ -169,9 +178,20 @@ class _Client_SignupState extends State<Client_Signup> {
                   ),
                   onPressed: () {
                     setState(() {
+                      _emailcontroller.text.isEmpty ? _validate = true : _validate = false;
+                      _passwordcontroller.text.isEmpty ? _validate = true : _validate = false;
+                      _namecontroller.text.isEmpty ? _validate = true : _validate = false;
 
                       //Sign up Function Will be Called
-                      signUp();
+                      _validate== false ?signUp(): Fluttertoast.showToast(
+                          msg: "Please Check Fields",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIos: 1,
+                          backgroundColor: Colors.grey.shade300,
+                          textColor: Colors.black,
+                          fontSize: 16.0
+                      );
                     });
                   },
                 ),

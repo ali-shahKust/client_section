@@ -147,7 +147,20 @@ DocumentSnapshot mRef;
                               fontSize: 18),
                         ),
                         onPressed: (){
-                         sendOfferReq();
+                          setState(() {
+                            _conscontroller.text.isEmpty ? _validate = true : _validate = false;
+                            _descontroller.text.isEmpty ? _validate = true : _validate = false;
+                          });
+
+                         _validate==false?sendOfferReq(): Fluttertoast.showToast(
+                             msg: "Please Check Fields",
+                             toastLength: Toast.LENGTH_SHORT,
+                             gravity: ToastGravity.CENTER,
+                             timeInSecForIos: 1,
+                             backgroundColor: Colors.grey.shade300,
+                             textColor: Colors.black,
+                             fontSize: 16.0
+                         );
                         },
                       ),
                     )),

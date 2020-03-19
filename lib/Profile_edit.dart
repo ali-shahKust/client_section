@@ -23,6 +23,7 @@ class Profile_Setting extends StatefulWidget {
 }
 
 class _Profile_SettingState extends State<Profile_Setting> {
+  bool _validate = false;
 
   //Variables
   final primary = Constant.appColor;
@@ -172,6 +173,7 @@ class _Profile_SettingState extends State<Profile_Setting> {
                   onChanged: (String value) {},
                   cursorColor: Constant.appColor,
                   decoration: InputDecoration(
+                      errorText: _validate ? 'Value Can\'t Be Empty' : null,
                       hintText: "Name",
                       prefixIcon: Material(
                         elevation: 0,
@@ -196,10 +198,12 @@ class _Profile_SettingState extends State<Profile_Setting> {
                 elevation: 2.0,
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 child: TextField(
+
                   controller: _phonecontroller,
                   onChanged: (String value) {},
                   cursorColor: Constant.appColor,
                   decoration: InputDecoration(
+                      errorText: _validate ? 'Value Can\'t Be Empty' : null,
                       hintText: "Phone Number",
                       prefixIcon: Material(
                         elevation: 0,
@@ -224,12 +228,14 @@ class _Profile_SettingState extends State<Profile_Setting> {
                 elevation: 2.0,
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 child: TextField(
+
                   controller: _descriptioncontroller,
                   onChanged: (String value) {},
                   cursorColor: Constant.appColor,
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   decoration: InputDecoration(
+                      errorText: _validate ? 'Value Can\'t Be Empty' : null,
                       hintText: "About Yourself",
                       prefixIcon: Material(
                         elevation: 0,

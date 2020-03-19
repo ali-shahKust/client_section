@@ -237,7 +237,7 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
         color: Colors.white,
       ),
       width: double.infinity,
-      height: 210,
+      height: 230,
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Row(
@@ -366,7 +366,8 @@ class _Search_Lawyer_PageState extends State<Search_Lawyer_Page> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        Describe_Offer(LawyerList[index])));
+                                        Describe_Offer( _filteredList.isEmpty
+                                            ? LawyerList[index]: _filteredList[index])));
                           });
                         },
                       ),
